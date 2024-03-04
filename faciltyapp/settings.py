@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Guest.apps.GuestConfig',
     'home.apps.HomeConfig',
     'host.apps.HostConfig',
+    "register.apps.RegisterConfig",
 ]
 
 MIDDLEWARE = [

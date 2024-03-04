@@ -9,16 +9,18 @@
 
     <style>
         body {
-    background-image: url('../images/home.jpg');
+    background-image: url('../static/images/home.jpg');
     background-size: cover; 
     background-repeat: no-repeat; 
-    background-color: aqua;
+    /* background-color: aqua; */
 }
 
         .container {
             background-color: rgba(255, 255, 255, 0.8); 
-            padding: 20px; 
-            border-radius: 10px; 
+            padding: 50px; 
+            border-radius: 10px;
+            margin-top: 100px;
+            margin-bottom: 100px;
         }
     </style>
 </head>
@@ -33,12 +35,12 @@
                     <p class="card-text">
                         Log in as Guest to view the facility
                     </p>
-                    <a href="http://localhost:8080/facility/templates/facility.html" class="btn btn-primary btn-block">Guest</a>
+                    <a href="http://127.0.0.1:8000/register" class="btn btn-primary btn-block">Guest</a>
                     <hr>
                     <p class="card-text">
                         Log in as an admin to manage the facility
                     </p>
-                    <a href="http://localhost:8080/facility/templates/login.html" class="btn btn-primary btn-block">Login</a>
+                    <a href="http://127.0.0.1:8000/admin/" class="btn btn-primary btn-block">Login</a>
                 </div>
             </div>
         </div>
