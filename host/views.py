@@ -4,7 +4,6 @@ from django.http import HttpResponse
 # Create your views here.
 
 def index(response):
-    return HttpResponse("Guest Index Page")
-
-# def v1(response):
-#     return HttpResponse("view1 for guest index page")
+    return HttpResponse("Host Index Page")
+# def index(request):
+#     return render(request, 'host page')
