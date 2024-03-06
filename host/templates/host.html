@@ -72,7 +72,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                 </li>
-                <!-- Showing logged-in user's name here -->
+                <!-- Show logged-in user's name here -->
                 {% if user.is_authenticated %}
                 <li class="nav-item">
 
@@ -134,16 +134,23 @@
                                 <button type="button" class="btn btn-danger">Delete</button>
                                 <button type="button" class="btn btn-success view-button"
                                     data-user-id="{{ user.id }}">View</button>
-                                <button type="button" class="btn btn-warning message-button">Message</button>
+                                <button type="button" class="btn btn-warning message-button"
+                                    data-user-id="{{ user.id }}">Message</button>
                             </div>
-                            
-                            <div id="messageForm_{{ user.id }}" style="display: none;">
+                            <!--message form-->
+                            <div id="messageForm_{{ user.id }}"
+                                style="display: none; padding: 20px; background-color: #f8f9fa; border-radius: 5px; margin-top: 10px;">
                                 <form id="sendMessageForm">
-                                    
-                                    <textarea id="messageText" rows="4" cols="50"></textarea><br>
+                                    <!--message form  -->
+                                    <div class="form-group">
+                                        <label for="messageText_{{ user.id }}">Message:</label>
+                                        <textarea class="form-control" id="messageText_{{ user.id }}"
+                                            rows="4"></textarea>
+                                    </div>
                                     <button type="submit" class="btn btn-primary">Send Message</button>
                                 </form>
                             </div>
+
                         </div>
                         <div class="card-footer user-details" style="display: none;">
                             <p>User Details:</p>
@@ -174,7 +181,10 @@
 
             // Toggle message form when clicking the "Message" button
             $(".message-button").on("click", function () {
-                $("#messageForm").toggle();
+                // Get the user ID associated with the clicked button
+                var userId = $(this).data("user-id");
+                // Toggle the message form corresponding to the user ID
+                $("#messageForm_" + userId).toggle();
             });
 
             // Toggle sidebar
