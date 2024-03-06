@@ -72,10 +72,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                 </li>
-                <!-- Show logged-in user's name here -->
+                <!-- Showing logged-in user's name here -->
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link text-success" href="#">{{ user.username }}</a>
+
+                    <a class="nav-link text-success" href="#">
+                        {{ user.username }}
+                    </a>
                 </li>
                 {% endif %}
             </ul>
@@ -106,36 +109,75 @@
             </li>
         </ul>
     </div>
-
-
     <!-- Page content -->
     <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">User List</h1>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Clients</h1>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Display users -->
-        <div class="row bg-dark">
-            {% for user in users %}
-            <ul>
-                <li>{{ user.username }}</li>
-                <li>{{ user.email }}</li>
-            </ul>
-            {% endfor %}
+            <!-- Display users -->
+            <div class="row">
+                {% for user in users %}
+                <div class="col-md-4">
+                    <div class="card mb-3" id="user_card_{{ user.id }}">
+                        <div class="card-body">
+                            <!-- User Avatar -->
+                            <h5 class="card-title">{{ user.username }}</h5>
+                            <p class="card-text">{{ user.email }}</p>
+                            <div class="btn-group" role="group" aria-label="User Actions">
+                                <button type="button" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn btn-danger">Delete</button>
+                                <button type="button" class="btn btn-success view-button"
+                                    data-user-id="{{ user.id }}">View</button>
+                                <button type="button" class="btn btn-warning message-button">Message</button>
+                            </div>
+                            <!-- Add the message form here -->
+                            <div id="messageForm_{{ user.id }}" style="display: none;">
+                                <form id="sendMessageForm">
+                                    <!-- Add your message form fields here -->
+                                    <textarea id="messageText" rows="4" cols="50"></textarea><br>
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card-footer user-details" style="display: none;">
+                            <p>User Details:</p>
+                            <ul>
+                                <li>{{ user.id }}</li>
+                                <li>Username: {{ user.username }}</li>
+                                <li>Email: {{ user.email }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
         </div>
     </div>
-</div>
-
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Toggle user details when clicking the "View" button
+            $(".view-button").on("click", function () {
+                var userId = $(this).data("user-id");
+                $("#user_card_" + userId + " .user-details").toggle();
+            });
+
+            // Toggle message form when clicking the "Message" button
+            $(".message-button").on("click", function () {
+                $("#messageForm").toggle();
+            });
+
+            // Toggle sidebar
             $("#sidebarCollapseBtn").on("click", function () {
                 $(".sidebar").toggleClass("collapsed");
                 $(".main-content").toggleClass("collapsed");
