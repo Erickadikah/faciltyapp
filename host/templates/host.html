@@ -51,6 +51,40 @@
         .sidebar-nav-link.active {
             color: #007bff;
         }
+
+        /* Background overlay */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 10000;
+            /* Adjusted z-index */
+        }
+        #userCreationForm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            display: none;
+            /* Hiddenform initially */
+            padding: 20px;
+            background-color: gray;
+            border-radius: 5px;
+            width: 700px;
+            /* box-shadow: #343a40; */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Showing overlay when form is toggled */
+        #userCreationForm.show,
+        #overlay.show {
+            display: block;
+        }
     </style>
 </head>
 
@@ -75,7 +109,6 @@
                 <!-- Show logged-in user's name here -->
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-
                     <a class="nav-link text-success" href="#">
                         {{ user.username }}
                     </a>
@@ -89,7 +122,7 @@
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link active" href="#">
-                    <i class="fas fa-user fa-lg"></i> <!-- Larger icon size on larger screens -->
+                    <i class="fas fa-user fa-lg"></i>
                 </a>
             </li>
             <li class="nav-item">
@@ -117,6 +150,34 @@
                     <div
                         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Clients</h1>
+                    </div>
+                    <button type="button" class="btn btn-primary mb-3" id="toggleUserForm">Add Client</button>
+                    <!-- User creation form -->
+                    <div id="userCreationForm">
+                        <form id="createUserForm">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber"
+                                    placeholder="Enter phone number">
+                            </div>
+                            <div class="form-group">
+                                <label for="rentPayDate">Rent Pay Date</label>
+                                <input type="date" class="form-control" id="rentPayDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="rentEndDate">Rent End Date</label>
+                                <input type="date" class="form-control" id="rentEndDate">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -191,6 +252,22 @@
             $("#sidebarCollapseBtn").on("click", function () {
                 $(".sidebar").toggleClass("collapsed");
                 $(".main-content").toggleClass("collapsed");
+            });
+
+            // Toggle user creation form when clicking the button
+            $("#toggleUserForm").on("click", function () {
+                $("#userCreationForm").toggleClass("show");
+                $("#overlay").toggleClass("show"); // Toggle overlay
+            });
+
+            // Submit user creation form
+            $("#createUserForm").on("submit", function (event) {
+                event.preventDefault();
+                var username = $("#username").val();
+                var email = $("#email").val();
+                var phoneNumber = $("#phoneNumber").val();
+                var rentPayDate = $("#rentPayDate").val();
+                var rentEndDate = $("#rentEndDate").val();
             });
         });
     </script>
