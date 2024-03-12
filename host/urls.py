@@ -1,8 +1,7 @@
 from django.urls import path
 from . import views
-# from .views import create_user
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    # path('create_user/', create_user, name='create_user'),
+    path('', views.index, name='index'),  # Example URL pattern
+    # Add more URL patterns for other views as needed
 ]

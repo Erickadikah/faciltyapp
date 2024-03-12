@@ -18,7 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from register import views as v
 from django.contrib.auth.views import LogoutView
+from host.views import create_client, delete_client, send_message
 # from host.views import user_list
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 
 urlpatterns = [
@@ -29,5 +33,11 @@ urlpatterns = [
     path('register/', v.register, name='register'),
     path('login/', v.login_view, name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    # path('user_list/', user_list, name='user_list'),
+    path('create_client/', create_client, name='create_client'),
+    path('delete_client/<int:id>/', delete_client, name='delete_client'),
+    path('send_message/', send_message, name='send_message'),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
