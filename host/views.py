@@ -15,9 +15,10 @@ from django.core import serializers
 from django.http import JsonResponse
 import random
 import string
+from .managers import CustomUserManager
 from django.contrib.auth.hashers import make_password
-
 from django.core.mail import send_mail
+from datetime import datetime
 
 load_dotenv()
 
@@ -34,44 +35,61 @@ def create_client(request):
     if request.method == 'POST':
         try:
             # Retrieve form data from request.POST
-            userName = request.POST.get('username')
+            username = request.POST.get('username')
             email = request.POST.get('email')
             phoneNumber = request.POST.get('phoneNumber')
             rentPayDate = request.POST.get('rentPayDate')
             rentEndDate = request.POST.get('rentEndDate')
 
+            print('username:', username)
+            print('email:', email)
+            print('phoneNumber:', phoneNumber)
+            print('rentPayDate:', rentPayDate)
+            print('rentEndDate:', rentEndDate)
+
+            # Check if rentPayDate and rentEndDate are not None and in YYYY-MM-DD format
+            if rentPayDate is None or rentEndDate is None:
+                return JsonResponse({'error': 'Rent pay date and rent end date are required'}, status=400)
+
+            # Check if rentPayDate and rentEndDate are in YYYY-MM-DD format
+            date_format = '%Y-%m-%d'
+            if not (datetime.strptime(rentPayDate, date_format) and datetime.strptime(rentEndDate, date_format)):
+                return JsonResponse({'error': 'Invalid date format. Date should be in YYYY-MM-DD format'}, status=400)
+
             # Generate a temporary password
             temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-            # Create user
-            user = User.objects.create_user(
-                username=userName,
-                email=email,
-                password=temp_password  # Set a temporary password
-            )
+            # Initialize CustomUserManager
+            custom_user_manager = CustomUserManager()
 
+            # Create user
+            user = custom_user_manager.create_user(
+                userName=username,
+                email=email,
+                password=temp_password
+            )
+            if user:
             # Additional user attributes
-            user.phone_number = phoneNumber
-            user.rent_pay_date = rentPayDate
-            user.rent_end_date = rentEndDate
-            user.save()
+                user.phoneNumber = phoneNumber
+                user.rentPayDate = rentPayDate
+                user.rentEndDate = rentEndDate
+                user.save()
 
             # Send login credentials to the client's email
-            send_login_credentials(email, userName, temp_password)
+            send_login_credentials(email, username, temp_password)
 
             return JsonResponse({'message': 'User created successfully. Login credentials sent to email.'}, status=201)
 
         except ValidationError as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-        except ValueError:
-            return JsonResponse({'error': 'Invalid date format. Date should be in YYYY-MM-DD format'}, status=400)
-
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
+@csrf_exempt
 def send_login_credentials(email, username, password):
     # Send email with login credentials
     subject = 'Your Account Credentials'
