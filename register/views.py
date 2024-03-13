@@ -11,18 +11,11 @@ def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            # Access additional fields
-            phone = form.cleaned_data.get("phone")
-            address = form.cleaned_data.get("address")
-            eircode = form.cleaned_data.get("eircode")
-            country = form.cleaned_data.get("country")
-            user = authenticate(username=username, password=raw_password)
-            if user is not None:
-                login(request, user)
-                return redirect("/login/")
+            user = form.save()
+            # You don't need to authenticate the user after registration,
+            # because the user is already created and authenticated by the save() method
+            login(request, user)
+            return redirect("/login/")  # Redirect to login page or any other page after registration
         else:
             # Display error messages if the form is invalid
             for field, errors in form.errors.items():

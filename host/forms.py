@@ -1,7 +1,11 @@
-# from django import forms
-# from .models import User
+from django import forms
+from .models import Client
 
-# class UserForm(forms.ModelForm):
-#     class Meta:
-#         model = User
-#         fields = ['username', 'email', 'phone_number', 'rent_pay_date', 'rent_end_date']
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['username', 'email', 'phoneNumber', 'rentPayDate', 'rentEndDate']
+
+class GuestLoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
