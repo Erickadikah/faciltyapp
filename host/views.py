@@ -14,8 +14,6 @@ def index(request):
 
 @csrf_exempt
 @login_required
-@csrf_exempt
-@login_required
 def create_client(request):
     if not request.user.has_perm('accounts.can_create_client'):
         return HttpResponseBadRequest("You don't have permission to create clients.")
