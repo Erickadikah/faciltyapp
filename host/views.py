@@ -1,156 +1,101 @@
-import json
-import datetime
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, get_user_model
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render, redirect
-from .models import User, Message
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
 from django.views.decorators.csrf import csrf_exempt
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from .forms import ClientForm, GuestLoginForm
+from .models import Client
 from django.http import JsonResponse
-from django.core.files.storage import FileSystemStorage
-from django.core import serializers
-from django.http import JsonResponse
+from django.contrib.auth.models import User
 import random
 import string
-from .managers import CustomUserManager
-from django.contrib.auth.hashers import make_password
-from django.core.mail import send_mail
-from datetime import datetime
 
-load_dotenv()
-
-# Database setup
-engine = create_engine(os.getenv('SQLALCHEMY_DATABASE_URI'))
-Session = sessionmaker(bind=engine)
+CustomUser = get_user_model()
 
 def index(request):
-    users = User.objects.all()
-    return render(request, "host.html", {'users': users})
+    clients = Client.objects.filter(user=request.user)
+    return render(request, "host.html", {'clients': clients})
+
+def generate_random_password():
+    # Generate a random password of length 8
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 @csrf_exempt
+@login_required
 def create_client(request):
+    if not request.user.has_perm('accounts.can_create_client'):
+        return HttpResponseBadRequest("You don't have permission to create clients.")
+    
+    clients = Client.objects.all()  # Define clients variable outside the if-else block
+
     if request.method == 'POST':
-        try:
-            # Retrieve form data from request.POST
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            phoneNumber = request.POST.get('phoneNumber')
-            rentPayDate = request.POST.get('rentPayDate')
-            rentEndDate = request.POST.get('rentEndDate')
+        form = ClientForm(request.POST)
+        if form.is_valid():
+    # Set the user before saving the form
+            client = form.save(commit=False)
+            client.user = request.user  # You can directly assign the request.user
+            client.creator_id = request.user.id
+            client.save()
+            password = generate_random_password()
+            user = User.objects.create_user(username=client.email, password=password)
+            print("clint username", client.username)
+            print("Client after saving:", client.email)
+            print("Client after saving:", client.phoneNumber)
+            print("Client after saving:", client.rentPayDate)
+            print("Client after saving:", client.rentEndDate)
+            print("creatorid", client.creator_id)
+            # print("pass", client.password)
 
-            print('username:', username)
-            print('email:', email)
-            print('phoneNumber:', phoneNumber)
-            print('rentPayDate:', rentPayDate)
-            print('rentEndDate:', rentEndDate)
-
-            # Check if rentPayDate and rentEndDate are not None and in YYYY-MM-DD format
-            if rentPayDate is None or rentEndDate is None:
-                return JsonResponse({'error': 'Rent pay date and rent end date are required'}, status=400)
-
-            # Check if rentPayDate and rentEndDate are in YYYY-MM-DD format
-            date_format = '%Y-%m-%d'
-            if not (datetime.strptime(rentPayDate, date_format) and datetime.strptime(rentEndDate, date_format)):
-                return JsonResponse({'error': 'Invalid date format. Date should be in YYYY-MM-DD format'}, status=400)
-
-            # Generate a temporary password
-            temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-
-            # Initialize CustomUserManager
-            custom_user_manager = CustomUserManager()
-
-            # Create user
-            user = custom_user_manager.create_user(
-                userName=username,
-                email=email,
-                password=temp_password
-            )
-            if user:
-            # Additional user attributes
-                user.phoneNumber = phoneNumber
-                user.rentPayDate = rentPayDate
-                user.rentEndDate = rentEndDate
-                user.save()
-
-            # Send login credentials to the client's email
-            send_login_credentials(email, username, temp_password)
-
-            return JsonResponse({'message': 'User created successfully. Login credentials sent to email.'}, status=201)
-
-        except ValidationError as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
-
+            # Set the password directly on the User object
+            user.set_password(password)
+            user.save()
+            print('Generated password:', password)
+            # Refresh clients after saving new client
+            clients = Client.objects.all()
+        return render(request, 'host.html', {'clients': clients})
+    else:
+        form = ClientForm()
+    return render(request, 'host.html', {'clients': clients, 'form': form})
 
 @csrf_exempt
-def send_login_credentials(email, username, password):
-    # Send email with login credentials
-    subject = 'Your Account Credentials'
-    message = f'Hello {username},\n\nYour account has been created. Please use the following credentials to log in:\nUsername: {username}\nPassword: {password}\n\nUpon login, you will be prompted to change your password.\n\nThank you!'
-    from_email = 'erickadikah2030@gmail.com'
-    send_mail(subject, message, from_email, [email])
+def guest_login(request):
+    if request.method == 'POST':
+        form = GuestLoginForm(request.POST)
+        
+        # Print the user before processing the form submission
+        print("User before form submission:", request.users)
     
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user:
+                # Log in the user
+                login(request, user)
+                return JsonResponse({'success': True, 'message': 'Login successful'})
+            else:
+                # Handle invalid credentials
+                return JsonResponse({'success': False, 'message': 'Invalid username or password'})
+        else:
+            # Handle form validation errors
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        # Handle GET request
+        return JsonResponse({'success': False, 'message': 'GET request not allowed'})
 
+
+
+# display all clients
+def display_clients(request):
+    clients = Client.objects.all()
+    return render(request, 'host.html', {'clients': clients})
+
+def display_clients(request):
+    clients = Client.objects.all()
+    return render(request, 'client.html', {'clients': clients})
 @csrf_exempt
 def delete_client(request, id):
-    if request.method == 'DELETE':
-        try:
-            # Get the user data before deleting
-            user = User.objects.filter(id=id).first()
-
-            if user:
-                # Serialize the user data
-                user_data = serializers.serialize('json', [user])
-
-                # Delete user
-                user.delete()
-
-                return JsonResponse({'message': 'User deleted successfully', 'user': user_data}, status=200)
-            else:
-                return JsonResponse({'error': 'User with specified ID does not exist'}, status=404)
-
-        except Exception as e:
-            # Log the error
-            print(e)
-            return JsonResponse({'error': 'Internal Server Error'}, status=500)
-
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
-
-def send_message(request):
-    if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        message_text = request.POST.get('message')
-        pdf_file = request.FILES.get('pdf_file')  # Assuming the file input field name is 'pdf_file'
-
-        try:
-            # Retrieve the user based on the provided user ID
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-
-        # Create a new message instance associated with the user and save it to the database
-        message = Message(user=user, text=message_text)
-        message.save()
-
-        # Save the uploaded PDF file to the server
-        if pdf_file:
-            fs = FileSystemStorage()
-            filename = fs.save(pdf_file.name, pdf_file)
-
-            # You can associate the PDF file with the message or user if needed
-            # For example:
-            # message.attachment = filename
-            # message.save()
-
-        # You can perform additional actions here, such as sending notifications
-
-        return JsonResponse({'success': True, 'message': 'Message sent successfully'})
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    client = Client.objects.get(id=id)
+    client.delete()
+    return redirect('create_client')

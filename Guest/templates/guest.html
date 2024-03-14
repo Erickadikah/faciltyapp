@@ -97,16 +97,35 @@
 <body>
     <!-- Navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#"><i class="fas fa-home"></i> Facility Management System</a>
+        <a class="navbar-brand" href="#">Clients Dashboard</a>
         <button class="navbar-toggler" type="button" id="sidebarCollapseBtn">
-            <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
         </button>
-    </nav>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Settings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            <!-- Show logged-in user's name here -->
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link text-success" href="#"> {{ user.username }} </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
     <!-- Sidebar -->
     <div class="sidebar bg-dark text-light">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#"><i class="fas fa-user"></i> Profile</a>
+                <a class="nav-link active" href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-bell"></i> Notifications</a>
@@ -139,7 +158,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Next Payment Due</h6>
-                                    <p class="card-text">March 15, 2024</p>
+                                    <p class="card-text">{{ user.rentEndDate }}</p>
                                 </div>
                                 <div class="col-sm-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Payment Status</h6>
@@ -178,7 +197,7 @@
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Shared House Items</h5>
+                            <h5 class="card-title mb-0">None Shared House Items</h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text">These are the items shared in the house:</p>
@@ -205,15 +224,17 @@
                 $(".sidebar").toggleClass("collapsed");
                 $(".main-content").toggleClass("collapsed");
             });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
+
             $("#toggleDetailsBtn").click(function () {
                 $("#detailsSection").toggle();
                 // Change button text based on section visibility
                 var buttonText = $("#detailsSection").is(":visible") ? "Hide Details" : "View Details";
                 $(this).text(buttonText);
+            });
+
+            $("#profileLink").click(function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                $("#userProfile").toggle(); // Toggle visibility of user profile data
             });
         });
     </script>

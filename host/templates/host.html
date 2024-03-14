@@ -176,52 +176,53 @@
         </div>
       </div>
       <!-- Display users -->
-      <div class="row">
-        {% for user in users %}
-        <div class="col-md-4">
-          <div class="card mb-3" id="user_card_{{ user.id }}">
-            <div class="card-body">
-              <!-- User Avatar -->
-              <h5 class="card-title">{{ user.username }}</h5>
-              <p class="card-text">{{ user.email }}</p>
-              <div class="btn-group" role="group" aria-label="User Actions">
-                <button type="button" class="btn btn-primary">Update</button>
-                <button type="button" class="btn btn-danger delete-button" data-user-id="{{ user.id }}">Delete</button>
-                <button type="button" class="btn btn-success view-button" data-user-id="{{ user.id }}">View</button>
-                <button type="button" class="btn btn-warning message-button" data-user-id="{{ user.id }}">Message</button>
-              </div>
-              <!--message form-->
-              <!-- Modify the form in your HTML template to include a file input field -->
-              <form id="sendMessageForm_{{ user.id }}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form-group">
-                  <label for="messageText_{{ user.id }}">Message:</label>
-                  <textarea class="form-control" id="messageText_{{ user.id }}" name="message_text" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="fileInput">File:</label>
-                  <input type="file" class="form-control-file" id="fileInput" name="file" />
-                </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-              </form>
-            </div>
-            <div class="card-footer user-details" style="display: none">
-              <p>User Details:</p>
-              <ul>
-                {% comment %}
-                <li>{{ user.id }}</li>
-                {% endcomment %}
-                <li>Username: {{ user.userName }}</li>
-                <li>Email: {{ user.email }}</li>
-                <li>Phone Number: {{ user.phone_number }}</li>
-                <li>Rent Pay Date: {{ user.rent_pay_date }}</li>
-                <li>Rent End Date: {{ user.rent_end_date }}</li>
-              </ul>
-            </div>
-          </div>
+      <!-- Display users -->
+<div class="row">
+  {% for client in clients %}
+  <div class="col-md-4">
+    <div class="card mb-3" id="user_card_{{ client.id }}">
+      <div class="card-body">
+        <!-- User Avatar -->
+        <h5 class="card-title">{{ client.username }}</h5>
+        <p class="card-text">{{ client.email }}</p>
+        <!-- Add more client details as needed -->
+        <div class="btn-group" role="group" aria-label="User Actions">
+          <button type="button" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-danger delete-button" data-user-id="{{ client.id }}">Delete</button>
+          <button type="button" class="btn btn-success view-button" data-user-id="{{ client.id }}">View</button>
+          <button type="button" class="btn btn-warning message-button" data-user-id="{{ client.id }}">Message</button>
         </div>
-        {% endfor %}
+        <!--message form-->
+        <!-- Modify the form in your HTML template to include a file input field -->
+        <form id="sendMessageForm_{{ client.id }}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="messageText_{{ client.id }}">Message:</label>
+            <textarea class="form-control" id="messageText_{{ client.id }}" name="message_text" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fileInput">File:</label>
+            <input type="file" class="form-control-file" id="fileInput" name="file" />
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
       </div>
+      <div class="card-footer user-details" style="display: none">
+        <p>User Details:</p>
+        <ul>
+          <li>Username: {{ client.username }}</li>
+          <li>Email: {{ client.email }}</li>
+          <!-- Add more client details as needed -->
+          <li>Phone Number: {{ client.phoneNumber }}</li>
+          <li>Rent Pay Date: {{ client.rentPayDate }}</li>
+          <li>Rent End Date: {{ client.rentEndDate }}</li>
+          <li>password: {{client.password}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
     </div>
   </div>
 
