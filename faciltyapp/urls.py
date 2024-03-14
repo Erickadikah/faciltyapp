@@ -22,6 +22,7 @@ from host.views import create_client, display_clients, delete_client, guest_logi
 # from host.views import user_list
 from django.conf.urls.static import static
 from django.conf import settings
+# from guest.views import user_profile
 
 
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path('display_clients/', display_clients, name='display_clients'),
     path('delete_client/<int:id>/', delete_client, name='delete_client'),
     path('guest_login/', guest_login, name='guest_login')
+    # path('user/profile/', user_profile, name='user_profile')
 
 ]
 

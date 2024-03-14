@@ -9,3 +9,7 @@ def index(request):
         return render(request, 'guest.html', {'client': client})
     else:
         return HttpResponse("You must be logged in to view this page.")
+    
+
+# def user_profile(request):
+#     return render(request, "user_profile.html")
