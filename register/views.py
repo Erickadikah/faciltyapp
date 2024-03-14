@@ -5,6 +5,7 @@ from .decorators import login_required
 from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm
 from django.contrib import messages
+from django.http import JsonResponse
 
 @login_required # This is a custom decorator
 def register(request):
@@ -42,5 +43,27 @@ def logout_view(request):
 
 def user_list(request):
     users = User.objects.all()
-    print(users)
-    return render(request, "host.html", {"users": users})
+    user_list = []
+    for user in users:
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            # Add more fields as needed
+        }
+        user_list.append(user_data)
+    return JsonResponse(user_list, safe=False)
+
+# user with user id
+def user(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            # Add more fields as needed
+        }
+        return JsonResponse(user_data)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)

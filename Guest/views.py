@@ -13,3 +13,6 @@ def index(request):
 
 # def user_profile(request):
 #     return render(request, "user_profile.html")
+
+# def guest_login(request):
+#     return render(request, "guest_login.html")

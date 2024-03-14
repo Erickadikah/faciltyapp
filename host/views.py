@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ClientForm, GuestLoginForm
 from .models import Client
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 import random
 import string
@@ -12,7 +13,7 @@ import string
 CustomUser = get_user_model()
 
 def index(request):
-    clients = Client.objects.all()
+    clients = Client.objects.filter(user=request.user)
     return render(request, "host.html", {'clients': clients})
 
 def generate_random_password():
@@ -33,6 +34,7 @@ def create_client(request):
     # Set the user before saving the form
             client = form.save(commit=False)
             client.user = request.user  # You can directly assign the request.user
+            client.creator_id = request.user.id
             client.save()
             password = generate_random_password()
             user = User.objects.create_user(username=client.email, password=password)
@@ -41,6 +43,7 @@ def create_client(request):
             print("Client after saving:", client.phoneNumber)
             print("Client after saving:", client.rentPayDate)
             print("Client after saving:", client.rentEndDate)
+            print("creatorid", client.creator_id)
             # print("pass", client.password)
 
             # Set the password directly on the User object
@@ -58,6 +61,10 @@ def create_client(request):
 def guest_login(request):
     if request.method == 'POST':
         form = GuestLoginForm(request.POST)
+        
+        # Print the user before processing the form submission
+        print("User before form submission:", request.users)
+    
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -65,13 +72,18 @@ def guest_login(request):
             if user:
                 # Log in the user
                 login(request, user)
-                return redirect('/guest/')
+                return JsonResponse({'success': True, 'message': 'Login successful'})
             else:
                 # Handle invalid credentials
-                return render(request, 'guest_login.html', {'form': form, 'error': 'Invalid username or password'})
+                return JsonResponse({'success': False, 'message': 'Invalid username or password'})
+        else:
+            # Handle form validation errors
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})
     else:
-        form = GuestLoginForm()
-    return render(request, 'guest_login.html', {'form': form})
+        # Handle GET request
+        return JsonResponse({'success': False, 'message': 'GET request not allowed'})
+
 
 
 # display all clients
