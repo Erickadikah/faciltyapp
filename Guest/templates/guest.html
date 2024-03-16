@@ -1,243 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facility Management System - Guest</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        /* Custom CSS */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-size: 24px;
-            color: #007bff;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 56px;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            width: 250px;
-            padding: 20px 0;
-            background-color: #343a40;
-            color: #fff;
-            transition: width 0.3s;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar-nav-link {
-            color: #dee2e6;
-            font-size: 18px;
-            margin-bottom: 10px;
-            transition: color 0.3s;
-        }
-
-        .sidebar-nav-link i {
-            margin-right: 10px;
-        }
-
-        .sidebar-nav-link:hover {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .card-title {
-            font-size: 24px;
-            margin-bottom: 0;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facility Management System - Guest</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Custom CSS */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .navbar-brand {
+      font-size: 24px;
+      color: #007bff;
+    }
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      width: 250px;
+      padding: 20px 0;
+      background-color: #343a40;
+      color: #fff;
+      transition: width 0.3s;
+      overflow-y: auto;
+    }
+    .sidebar.collapsed {
+      width: 80px;
+    }
+    .sidebar-nav-link {
+      color: #dee2e6;
+      font-size: 18px;
+      margin-bottom: 10px;
+      transition: color 0.3s;
+    }
+    .sidebar-nav-link i {
+      margin-right: 10px;
+    }
+    .sidebar-nav-link:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+    .card {
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 10px 10px 0 0;
+    }
+    .card-title {
+      font-size: 24px;
+      margin-bottom: 0;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    /* Profile section */
+    #userProfile {
+      position: fixed;
+      top: 56px;
+      left: 250px;
+      z-index: 99;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+      display: none;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    /* Notification section */
+    #notificationSection {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      z-index: 99;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+      display: none;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    /* Upload documents section */
+    #uploadDocumentsSection {
+      position: fixed;
+      top: 150px;
+      right: 0;
+      z-index: 99;
+      {% comment %} background-color: #fff; {% endcomment %}
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+      display: none;
+      {% comment %} box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); {% endcomment %}
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Navigation bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#">Clients Dashboard</a>
-        <button class="navbar-toggler" type="button" id="sidebarCollapseBtn">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Settings</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-            <!-- Show logged-in user's name here -->
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link text-success" href="#"> {{ user.username }} </a>
-            </li>
-            {% endif %}
-          </ul>
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Clients Dashboard</a>
+    <button class="navbar-toggler" type="button" id="sidebarCollapseBtn">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Settings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+        <!-- Show logged-in user's name here -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link text-success" href="#"> {{ user.username }} </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+  <div class="sidebar bg-dark text-light">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="notificationLink"><i class="fas fa-bell"></i> Notifications</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="uploadDocumentsLink"><i class="fas fa-file-upload"></i> Upload Documents</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Page content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="h2">Dashboard</h1>
         </div>
-      </nav>
-    <!-- Sidebar -->
-    <div class="sidebar bg-dark text-light">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-bell"></i> Notifications</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-file-alt"></i> Documents</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-file-upload"></i> Uploads</a>
-            </li>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Rent status content here -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Rent Status</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h6 class="card-subtitle mb-2 text-muted">Next Payment Due</h6>
+                  <p class="card-text">{{ client.rentEndDate }}</p>
+                </div>
+                <div class="col-sm-6">
+                  <h6 class="card-subtitle mb-2 text-muted">Payment Status</h6>
+                  <p class="card-text text-success">Paid</p>
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="button" class="btn btn-secondary" id="toggleDetailsBtn">View Details</button>
+              </div>
+              <!-- Additional details section -->
+              <div id="detailsSection" style="display: none">
+                <h6 class="mt-3">Additional Details</h6>
+                <p>Payment was made on time and the receipt is available for download.</p>
+                <p>
+                    <strong>Payment Date:</strong> {{ user.rentEndDate }}
+                </p>
+                <p>
+                    <strong>Payment Amount:</strong> ${{ user.rentAmount }}
+                </p>
+                <p>
+                    <strong>Payment Method:</strong> Cash
+                </p>
+                <button type="button" class="btn btn-primary">Download Receipt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Shared house items content here -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Shared House Items</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text">These are the items shared in the house:</p>
+              <ul>
+                <li>Kitchen Microwave</li>
+                <li>Living Room TV</li>
+                <li>Bathroom Heater</li>
+                <li>Bedroom AC</li>
+                <li>Kitchen Fridge</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">None Shared House Items</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text">These are the items not shared in the house:</p>
+              <ul>
+                <li>Personal Computer</li>
+                <li>Television Set</li>
+                <li>Refrigerator</li>
+                <li>Air Conditioning Unit</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification section -->
+  <div id="notificationSection" style="display: none">
+    <!-- Notification content here -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Notifications</h5>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>Notification 1</li>
+          <li>Notification 2</li>
+          <li>Notification 3</li>
+          <!-- Add more notifications as needed -->
         </ul>
+      </div>
     </div>
-
-    <!-- Page content -->
-    <div class="main-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 class="h2">Dashboard</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <!-- Rent status content here -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Rent Status</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <h6 class="card-subtitle mb-2 text-muted">Next Payment Due</h6>
-                                    <p class="card-text">{{ user.rentEndDate }}</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <h6 class="card-subtitle mb-2 text-muted">Payment Status</h6>
-                                    <p class="card-text text-success">Paid</p>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="button" class="btn btn-primary">Make Payment</button>
-                                <button type="button" class="btn btn-secondary" id="toggleDetailsBtn">View Details</button>
-                            </div>
-                            <!-- Additional details section -->
-                            <div id="detailsSection" style="display: none;">
-                                <h6 class="mt-3">Additional Details</h6>
-                                <p>This is some additional information about the rent status.</p>
-                                <button type="button" class="btn btn-primary">Download Receipt</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <!-- Shared house items content here -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Shared House Items</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">These are the items shared in the house:</p>
-                            <ul>
-                                <li>Kitchen Microwave</li>
-                                <li>Living Room TV</li>
-                                <li>Bathroom Heater</li>
-                                <li>Bedroom AC</li>
-                                <li>Kitchen Fridge</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">None Shared House Items</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">These are the items shared in the house:</p>
-                            <ul>
-                                <li>Kitchen Microwave</li>
-                                <li>Living Room TV</li>
-                                <li>Bathroom Heater</li>
-                                <li>Bedroom AC</li>
-                                <li>Kitchen Fridge</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <!-- Profile section -->
+  <div id="userProfile">
+    <!-- Profile toggle form -->
+    <div>
+      {% comment %} user profile data {% endcomment %}
+      <form>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" value="{{ user.username }}" readonly>
         </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+          <small class="form-text text-muted">You can change your email in the settings page.</small>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="text" class="form-control" id="phone" value="{{ user.phone }}" readonly>
+          <small class="form-text text-muted">You can change your phone number in the settings page.</small>
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" class="form-control" id="address" value="{{ user.address }}" readonly>
+          <small class="form-text text-muted">You can change your address in the settings page.</small>
+        </div>
+        <div class="form-group">
+          <label for="rentPayDate">Rent Pay Date</label>
+          <input type="text" class="form-control" id="rentPayDate" value="{{ user.rentPayDate }}" readonly>
+          <small class="form-text text-muted">You can change your rent pay date in the settings page.</small>
+        </div>
+        <button type="button" class="btn btn-primary mt-3" id="editProfileBtn">Edit Profile</button>
+        <button type="button" class="btn btn-secondary mt-3" id="closeProfileBtn">Close</button>
+        <button type="button" class="btn btn-danger mt-3" id="deleteProfileBtn">Delete Profile</button>
+        <button type="button" class="btn btn-success mt-3" id="saveProfileBtn" style="display: none">Save</button>
+        <button type="button" class="btn btn-secondary mt-3" id="cancelProfileBtn" style="display: none">Cancel</button>
+        <button type="button" class="btn btn-danger mt-3" id="confirmDeleteProfileBtn" style="display: none">Confirm Delete</button>
+        <button type="button" class="btn btn-secondary mt-3" id="cancelDeleteProfileBtn" style="display: none">Cancel Delete</button>
+        <small class="form-text text-muted">You can delete your profile in the settings page.</small>
+      </form>
     </div>
+  </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#sidebarCollapseBtn").on("click", function () {
-                $(".sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("collapsed");
-            });
+  <!-- Upload documents section -->
+  <div id="uploadDocumentsSection" style="display: none">
+    <!-- Upload documents content here -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Upload Documents</h5>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="form-group">
+            <label for="documentName">Document Name</label>
+            <input type="text" class="form-control" id="documentName" placeholder="Enter document name">
+          </div>
+          <div class="form-group">
+            <label for="documentType">Document Type</label>
+            <select class="form-control" id="documentType">
+              <option>Passport</option>
+              <option>Driver's License</option>
+              <option>ID Card</option>
+              <option>Payment Document</option>
+              <!-- Add more document types as needed -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="uploadFile">Choose File</label>
+            <input type="file" class="form-control-file" id="uploadFile">
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-            $("#toggleDetailsBtn").click(function () {
-                $("#detailsSection").toggle();
-                // Change button text based on section visibility
-                var buttonText = $("#detailsSection").is(":visible") ? "Hide Details" : "View Details";
-                $(this).text(buttonText);
-            });
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#sidebarCollapseBtn").on("click", function () {
+        $(".sidebar").toggleClass("collapsed");
+        $(".main-content").toggleClass("collapsed");
+      });
 
-            $("#profileLink").click(function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                $("#userProfile").toggle(); // Toggle visibility of user profile data
-            });
-        });
-    </script>
+      $("#toggleDetailsBtn").click(function () {
+        $("#detailsSection").toggle();
+      });
+
+      // Show profile section
+      $("#profileLink").click(function () {
+        $("#userProfile").toggle();
+        $("#notificationSection").hide();
+        $("#uploadDocumentsSection").hide();
+      });
+
+      // Show notification section
+      $("#notificationLink").click(function () {
+        $("#notificationSection").toggle();
+        $("#userProfile").hide();
+        $("#uploadDocumentsSection").hide();
+      });
+
+      // Show upload documents section
+      $("#uploadDocumentsLink").click(function () {
+        $("#uploadDocumentsSection").toggle();
+        $("#userProfile").hide();
+        $("#notificationSection").hide();
+      });
+
+      // Edit profile
+      $("#editProfileBtn").click(function () {
+        // Code to enable editing fields
+        $("#editProfileBtn").hide();
+        $("#deleteProfileBtn").hide();
+        $("#saveProfileBtn").show();
+        $("#cancelProfileBtn").show();
+      });
+
+      // Cancel editing profile
+      $("#cancelProfileBtn").click(function () {
+        // Code to revert changes
+        $("#editProfileBtn").show();
+        $("#deleteProfileBtn").show();
+        $("#saveProfileBtn").hide();
+        $("#cancelProfileBtn").hide();
+      });
+
+      // Delete profile
+      $("#deleteProfileBtn").click(function () {
+        // Code to prompt confirmation
+        $("#deleteProfileBtn").hide();
+        $("#editProfileBtn").hide();
+        $("#confirmDeleteProfileBtn").show();
+        $("#cancelDeleteProfileBtn").show();
+      });
+
+      // Cancel profile deletion
+      $("#cancelDeleteProfileBtn").click(function () {
+        // Code to cancel deletion
+        $("#deleteProfileBtn").show();
+        $("#editProfileBtn").show();
+        $("#confirmDeleteProfileBtn").hide();
+        $("#cancelDeleteProfileBtn").hide();
+      });
+    });
+  </script>
 </body>
-
 </html>
