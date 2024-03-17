@@ -150,7 +150,12 @@ def get_user(request, user_id):
                 'user_id': user.id,
                 'username': user.username,
                 'email': user.email,
-                'clients': [{'id': client.id, 'username': client.username, 'email': client.email} for client in clients]
+                # 'phone': user.phone,
+                # 'address': user.address,
+                # 'aircode': user.eircode,
+                # 'country': user.country,
+                'client_count': clients.count(),
+                'clients': [{'id': client.id, 'username': client.username, 'email': client.email,} for client in clients]
                 }
             return JsonResponse(user_data)
         except User.DoesNotExist:

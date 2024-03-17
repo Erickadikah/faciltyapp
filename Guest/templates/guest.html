@@ -24,7 +24,7 @@
       bottom: 0;
       left: 0;
       z-index: 100;
-      width: 250px;
+      width: 100px; /* Increased width for better readability */
       padding: 20px 0;
       background-color: #343a40;
       color: #fff;
@@ -48,7 +48,7 @@
       text-decoration: none;
     }
     .main-content {
-      margin-left: 250px;
+      margin-left: 240px; /* Adjusted margin for better alignment */
       padding: 20px;
     }
     .card {
@@ -78,40 +78,32 @@
       border-color: #0056b3;
     }
     /* Profile section */
-    #userProfile {
+    #userProfile, #uploadDocumentsSection {
       position: fixed;
-      top: 56px;
-      left: 250px;
+      top: 80px;
       z-index: 99;
       background-color: #fff;
       padding: 20px;
-      border-radius: 0 0 10px 10px;
+      border-radius: 10px;
       display: none;
+      margin-right: 80px;
+      margin-left: 150px; /* Adjusted margin for better alignment */
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
-    /* Notification section */
     #notificationSection {
+      left: 240px; /* Adjusted position for better alignment */
       position: fixed;
-      top: 56px;
-      left: 0;
+      top: 120px;
       z-index: 99;
-      background-color: #fff;
+      width: 400px;
       padding: 20px;
-      border-radius: 0 0 10px 10px;
       display: none;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      {% comment %} margin-right: 30px; {% endcomment %}
+      {% comment %} margin-left: 40px; /* Adjusted margin for better alignment */ {% endcomment %}
     }
-    /* Upload documents section */
     #uploadDocumentsSection {
-      position: fixed;
       top: 150px;
-      right: 0;
-      z-index: 99;
-      {% comment %} background-color: #fff; {% endcomment %}
-      padding: 20px;
-      border-radius: 0 0 10px 10px;
-      display: none;
-      {% comment %} box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); {% endcomment %}
+      right: 2px; /* Adjusted position for better alignment */
     }
   </style>
 </head>
@@ -124,12 +116,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a>
-        </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
@@ -146,13 +132,19 @@
   <div class="sidebar bg-dark text-light">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link active" href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
+        <a class="nav-link active" href="#" id="profileLink">
+          <i class="fas fa-user fa-lg"></i>
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" id="notificationLink"><i class="fas fa-bell"></i> Notifications</a>
+        <a class="nav-link" href="#" id="notificationLink"
+          ><i class="fas fa-bell fa-lg"></i
+        ></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" id="uploadDocumentsLink"><i class="fas fa-file-upload"></i> Upload Documents</a>
+        <a class="nav-link" href="#" id="uploadDocumentsLink"
+          ><i class="fas fa-file-upload fa-lg"></i
+        ></a>
       </li>
     </ul>
   </div>
@@ -175,31 +167,40 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-sm-6">
-                  <h6 class="card-subtitle mb-2 text-muted">Next Payment Due</h6>
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    Next Payment Due
+                  </h6>
                   <p class="card-text">{{ client.rentEndDate }}</p>
                 </div>
                 <div class="col-sm-6">
-                  <h6 class="card-subtitle mb-2 text-muted">Payment Status</h6>
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    Payment Status
+                  </h6>
                   <p class="card-text text-success">Paid</p>
                 </div>
               </div>
               <div class="text-center">
-                <button type="button" class="btn btn-secondary" id="toggleDetailsBtn">View Details</button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="toggleDetailsBtn"
+                >
+                  View Details
+                </button>
               </div>
               <!-- Additional details section -->
               <div id="detailsSection" style="display: none">
                 <h6 class="mt-3">Additional Details</h6>
-                <p>Payment was made on time and the receipt is available for download.</p>
                 <p>
-                    <strong>Payment Date:</strong> {{ user.rentEndDate }}
+                  Payment was made on time and the receipt is available for
+                  download.
                 </p>
-                <p>
-                    <strong>Payment Amount:</strong> ${{ user.rentAmount }}
-                </p>
-                <p>
-                    <strong>Payment Method:</strong> Cash
-                </p>
-                <button type="button" class="btn btn-primary">Download Receipt</button>
+                <p><strong>Payment Date:</strong> {{ user.rentEndDate }}</p>
+                <p><strong>Payment Amount:</strong> ${{ user.rentAmount }}</p>
+                <p><strong>Payment Method:</strong> Cash</p>
+                <button type="button" class="btn btn-primary">
+                  Download Receipt
+                </button>
               </div>
             </div>
           </div>
@@ -211,7 +212,9 @@
               <h5 class="card-title mb-0">Shared House Items</h5>
             </div>
             <div class="card-body">
-              <p class="card-text">These are the items shared in the house:</p>
+              <p class="card-text">
+                These are the items shared in the house:
+              </p>
               <ul>
                 <li>Kitchen Microwave</li>
                 <li>Living Room TV</li>
@@ -226,7 +229,9 @@
               <h5 class="card-title mb-0">None Shared House Items</h5>
             </div>
             <div class="card-body">
-              <p class="card-text">These are the items not shared in the house:</p>
+              <p class="card-text">
+                These are the items not shared in the house:
+              </p>
               <ul>
                 <li>Personal Computer</li>
                 <li>Television Set</li>
@@ -241,22 +246,50 @@
   </div>
 
   <!-- Notification section -->
-  <div id="notificationSection" style="display: none">
+  <div id="notificationSection" style="display: none;">
     <!-- Notification content here -->
-    <div class="card">
-      <div class="card-header">
+    <div class="card border-0">
+      <div class="card-header bg-success text-white">
         <h5 class="card-title mb-0">Notifications</h5>
       </div>
-      <div class="card-body">
-        <ul>
-          <li>Notification 1</li>
-          <li>Notification 2</li>
-          <li>Notification 3</li>
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">New Message from John Doe</h6>
+                <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.</p>
+                <small class="text-muted">Just now</small>
+              </div>
+              <span class="badge badge-primary">New</span>
+            </div>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">Meeting Reminder</h6>
+                <p class="mb-1">Don't forget about the meeting tomorrow at 10:00 AM in Conference Room A.</p>
+                <small class="text-muted">2 hours ago</small>
+              </div>
+              <span class="badge badge-secondary">Old</span>
+            </div>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">Urgent: Server Maintenance</h6>
+                <p class="mb-1">Scheduled maintenance for the server will start in 30 minutes. Please make sure all work is saved.</p>
+                <small class="text-muted">Yesterday</small>
+              </div>
+              <span class="badge badge-warning">Urgent</span>
+            </div>
+          </a>
           <!-- Add more notifications as needed -->
-        </ul>
+        </div>
       </div>
     </div>
   </div>
+  
   <!-- Profile section -->
   <div id="userProfile">
     <!-- Profile toggle form -->
@@ -265,52 +298,143 @@
       <form>
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" class="form-control" id="username" value="{{ user.username }}" readonly>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            value="{{ user.username }}"
+            readonly
+          />
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
-          <small class="form-text text-muted">You can change your email in the settings page.</small>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            value="{{ user.email }}"
+            readonly
+          />
+          <small class="form-text text-muted"
+            >You can change your email in the settings page.</small
+          >
         </div>
         <div class="form-group">
           <label for="phone">Phone</label>
-          <input type="text" class="form-control" id="phone" value="{{ user.phone }}" readonly>
-          <small class="form-text text-muted">You can change your phone number in the settings page.</small>
+          <input
+            type="text"
+            class="form-control"
+            id="phone"
+            value="{{ user.phone }}"
+            readonly
+          />
+          <small class="form-text text-muted"
+            >You can change your phone number in the settings page.</small
+          >
         </div>
         <div class="form-group">
           <label for="address">Address</label>
-          <input type="text" class="form-control" id="address" value="{{ user.address }}" readonly>
-          <small class="form-text text-muted">You can change your address in the settings page.</small>
+          <input
+            type="text"
+            class="form-control"
+            id="address"
+            value="{{ user.address }}"
+            readonly
+          />
+          <small class="form-text text-muted"
+            >You can change your address in the settings page.</small
+          >
         </div>
         <div class="form-group">
           <label for="rentPayDate">Rent Pay Date</label>
-          <input type="text" class="form-control" id="rentPayDate" value="{{ user.rentPayDate }}" readonly>
-          <small class="form-text text-muted">You can change your rent pay date in the settings page.</small>
+          <input
+            type="text"
+            class="form-control"
+            id="rentPayDate"
+            value="{{ user.rentPayDate }}"
+            readonly
+          />
+          <small class="form-text text-muted"
+            >You can change your rent pay date in the settings page.</small
+          >
         </div>
-        <button type="button" class="btn btn-primary mt-3" id="editProfileBtn">Edit Profile</button>
-        <button type="button" class="btn btn-secondary mt-3" id="closeProfileBtn">Close</button>
-        <button type="button" class="btn btn-danger mt-3" id="deleteProfileBtn">Delete Profile</button>
-        <button type="button" class="btn btn-success mt-3" id="saveProfileBtn" style="display: none">Save</button>
-        <button type="button" class="btn btn-secondary mt-3" id="cancelProfileBtn" style="display: none">Cancel</button>
-        <button type="button" class="btn btn-danger mt-3" id="confirmDeleteProfileBtn" style="display: none">Confirm Delete</button>
-        <button type="button" class="btn btn-secondary mt-3" id="cancelDeleteProfileBtn" style="display: none">Cancel Delete</button>
-        <small class="form-text text-muted">You can delete your profile in the settings page.</small>
+        <button
+          type="button"
+          class="btn btn-primary mt-3"
+          id="editProfileBtn"
+        >
+          Edit Profile
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary mt-3"
+          id="closeProfileBtn"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger mt-3"
+          id="deleteProfileBtn"
+        >
+          Delete Profile
+        </button>
+        <button
+          type="button"
+          class="btn btn-success mt-3"
+          id="saveProfileBtn"
+          style="display: none"
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary mt-3"
+          id="cancelProfileBtn"
+          style="display: none"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger mt-3"
+          id="confirmDeleteProfileBtn"
+          style="display: none"
+        >
+          Confirm Delete
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary mt-3"
+          id="cancelDeleteProfileBtn"
+          style="display: none"
+        >
+          Cancel Delete
+        </button>
+        <small class="form-text text-muted"
+          >You can delete your profile in the settings page.</small
+        >
       </form>
     </div>
   </div>
 
   <!-- Upload documents section -->
-  <div id="uploadDocumentsSection" style="display: none">
+  <div id="uploadDocumentsSection" style="display: none;">
     <!-- Upload documents content here -->
-    <div class="card">
-      <div class="card-header">
+    <div class="card border-0">
+      <div class="card-header bg-primary text-white">
         <h5 class="card-title mb-0">Upload Documents</h5>
       </div>
       <div class="card-body">
         <form>
           <div class="form-group">
             <label for="documentName">Document Name</label>
-            <input type="text" class="form-control" id="documentName" placeholder="Enter document name">
+            <input
+              type="text"
+              class="form-control"
+              id="documentName"
+              placeholder="Enter document name"
+            />
           </div>
           <div class="form-group">
             <label for="documentType">Document Type</label>
@@ -324,14 +448,17 @@
           </div>
           <div class="form-group">
             <label for="uploadFile">Choose File</label>
-            <input type="file" class="form-control-file" id="uploadFile">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="uploadFile">
+              <label class="custom-file-label" for="uploadFile">Choose file</label>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Upload</button>
         </form>
       </div>
     </div>
   </div>
-
+  
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
