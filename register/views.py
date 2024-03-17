@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm
 from django.contrib import messages
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 @login_required # This is a custom decorator
 def register(request):
     if request.method == "POST":
@@ -33,7 +35,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("/guest/")
+            return redirect("/host/")
     return render(request, "login.html")
 
 @login_required
