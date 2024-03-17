@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission
 
 CustomUser = get_user_model()
 
@@ -17,3 +18,10 @@ class Client(models.Model):
     
     def __str__(self):
         return self.username
+    
+class GuestPermission(models.Model):
+    class Meta:
+        permissions = [
+            ('can_login_as_guest', 'Can log in as guest'),
+            ('cant_login_as_host', 'Can not log in as host')
+        ]
