@@ -83,6 +83,33 @@
     #overlay.show {
       display: block;
     }
+    /* Profile section */
+    #userProfile {
+      position: fixed;
+      top: 80px;
+      left: 250px;
+      z-index: 100;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+      display: none;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      background-color: gray;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    #notificationSection {
+      left: 240px; /* Adjusted position for better alignment */
+      position: fixed;
+      top: 120px;
+      z-index: 99;
+      width: 400px;
+      padding: 20px;
+      display: none;
+      {% comment %} margin-right: 30px; {% endcomment %}
+      {% comment %} margin-left: 40px; /* Adjusted margin for better alignment */ {% endcomment %}
+    }
   </style>
 
 </head>
@@ -95,12 +122,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a>
-        </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
@@ -117,12 +138,12 @@
   <div class="sidebar bg-dark text-light">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link active" href="#">
+        <a class="nav-link active" href="#" id="profileLink">
           <i class="fas fa-user fa-lg"></i>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="#" id="notificationLink">
           <i class="fas fa-bell fa-lg"></i>
         </a>
       </li>
@@ -132,7 +153,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="#" id="notificationLink">
           <i class="fas fa-file-upload fa-lg"></i>
         </a>
       </li>
@@ -144,7 +165,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Clients</h1>
+            <h1 class="h2">My Clients</h1>
           </div>
           <button type="button" class="btn btn-primary mb-3" id="toggleUserForm">Add Client</button>
           <!-- User creation form -->
@@ -175,7 +196,110 @@
           </div>
         </div>
       </div>
-      <!-- Display users -->
+      <!-- user Profile -->
+      <div id="userProfile">
+        <!-- Profile toggle form -->
+        <div>
+          {% comment %} user profile data {% endcomment %}
+          <form>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" value="{{ user.username }}" readonly>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+              <small class="form-text text-white">You can change your email in the settings page.</small>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" id="phone" value="{{ user.phone }}" readonly>
+              <small class="form-text text-white">You can change your phone number in the settings page.</small>
+            </div>
+            {% comment %} <div class="form-group">
+              <label for="rentPayDate">Clients</label>
+              <input type="date" class="form-control" id="client_count" value="{{ client_count }}" readonly>
+            </div> {% endcomment %}
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" id="address" value="{{ user.address }}" readonly>
+              <small class="form-text text-white">You can change your address in the settings page.</small>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" id="editProfileBtn">Edit Profile</button>
+            <button type="button" class="btn btn-secondary mt-3" id="closeProfileBtn">Close</button>
+            <button type="button" class="btn btn-danger mt-3" id="deleteProfileBtn">Delete Profile</button>
+            <button type="button" class="btn btn-success mt-3" id="saveProfileBtn" style="display: none">Save</button>
+            <button type="button" class="btn btn-secondary mt-3" id="cancelProfileBtn" style="display: none">Cancel</button>
+            <button type="button" class="btn btn-danger mt-3" id="confirmDeleteProfileBtn" style="display: none">Confirm Delete</button>
+            <button type="button" class="btn btn-secondary mt-3" id="cancelDeleteProfileBtn" style="display: none">Cancel Delete</button>
+            <small class="form-text text-white">You can delete your profile in the settings page.</small>
+          </form>
+        </div>
+      </div>
+
+   <!-- Notification section -->
+   <div id="notificationSection" style="display: none">
+    <!-- Notification content here -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Notifications</h5>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>Notification 1</li>
+          <li>Notification 2</li>
+          <li>Notification 3</li>
+          <!-- Add more notifications as needed -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<!-- Notification section -->
+<div id="notificationSection" style="display: none;">
+  <!-- Notification content here -->
+  <div class="card border-0">
+    <div class="card-header bg-success text-white">
+      <h5 class="card-title mb-0">Notifications</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">New Message from John Doe</h6>
+              <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.</p>
+              <small class="text-muted">Just now</small>
+            </div>
+            <span class="badge badge-primary">New</span>
+          </div>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">Meeting Reminder</h6>
+              <p class="mb-1">Don't forget about the meeting tomorrow at 10:00 AM in Conference Room A.</p>
+              <small class="text-muted">2 hours ago</small>
+            </div>
+            <span class="badge badge-secondary">Old</span>
+          </div>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">Urgent: Server Maintenance</h6>
+              <p class="mb-1">Scheduled maintenance for the server will start in 30 minutes. Please make sure all work is saved.</p>
+              <small class="text-muted">Yesterday</small>
+            </div>
+            <span class="badge badge-warning">Urgent</span>
+          </div>
+        </a>
+        <!-- Add more notifications as needed -->
+      </div>
+    </div>
+  </div>
+</div>
+
       <!-- Display users -->
 <div class="row">
   {% for client in clients %}
@@ -255,6 +379,48 @@
         $("#overlay").toggleClass("show"); // Toggle overlay
       });
 
+      // Show profile section
+      $("#profileLink").click(function () {
+        $("#userProfile").toggle();
+        $("#notificationSection").hide();
+        $("#uploadDocumentsSection").hide();
+      });
+
+      $("#editProfileBtn").click(function () {
+        // Code to enable editing fields
+        $("#editProfileBtn").hide();
+        $("#deleteProfileBtn").hide();
+        $("#saveProfileBtn").show();
+        $("#cancelProfileBtn").show();
+      });
+
+      // Cancel editing profile
+      $("#cancelProfileBtn").click(function () {
+        // Code to revert changes
+        $("#editProfileBtn").show();
+        $("#deleteProfileBtn").show();
+        $("#saveProfileBtn").hide();
+        $("#cancelProfileBtn").hide();
+      });
+
+      // Delete profile
+      $("#deleteProfileBtn").click(function () {
+        // Code to prompt confirmation
+        $("#deleteProfileBtn").hide();
+        $("#editProfileBtn").hide();
+        $("#confirmDeleteProfileBtn").show();
+        $("#cancelDeleteProfileBtn").show();
+      });
+
+      // Cancel profile deletion
+      $("#cancelDeleteProfileBtn").click(function () {
+        // Code to cancel deletion
+        $("#deleteProfileBtn").show();
+        $("#editProfileBtn").show();
+        $("#confirmDeleteProfileBtn").hide();
+        $("#cancelDeleteProfileBtn").hide();
+      });
+
       // Submit user creation form
       $("#createUserForm").on("submit", function (event) {
         event.preventDefault();
@@ -265,6 +431,13 @@
           rentPayDate: $("#rentPayDate").val(),
           rentEndDate: $("#rentEndDate").val(),
         };
+
+        // Show notification section
+        $("#notificationLink").click(function () {
+          $("#notificationSection").toggle();
+          $("#userProfile").hide();
+          $("#uploadDocumentsSection").hide();
+        });
 
         // Send form data to the backend (Django view)
         $.ajax({
