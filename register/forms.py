@@ -12,4 +12,13 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2', 'phone', 'address', 'eircode', 'country']
-# Path: register/views.py
+        
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.phone = self.cleaned_data['phone']
+        user.address = self.cleaned_data['address']
+        user.eircode = self.cleaned_data['eircode']
+        user.country = self.cleaned_data['country']
+        if commit:
+            user.save()
+        return user

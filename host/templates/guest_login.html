@@ -67,17 +67,18 @@
 <body>
   <div class="login-container">
     <h2>Guest Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label for="id_email">Email:</label>
-  <input type="text" id="id_email" name="email" placeholder="Enter Email" />
-        <label for="id_password">Password:</label>
-        <input type="password" id="id_password" name="password" placeholder="Enter Password" />
-        <button type="submit">Login</button>
-      </form>      
+    <form method="post" action="{% url 'guest_login' %}">
+      {% csrf_token %}
+      <label for="id_email">Email:</label>
+      <input type="text" id="id_email" name="email" placeholder="Enter Email" />
+      <label for="id_password">Password:</label>
+      <input type="password" id="id_password" name="password" placeholder="Enter Password" />
+      <button type="submit">Login</button>
+    </form>    
+  <div class="error-message">
     {% if error %}
-    <p class="error-message">{{ error }}</p>
-    {% endif %}
+      {{ error }}
+    {% endif %}       
   </div>
 </body>
 </html>

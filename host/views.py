@@ -12,7 +12,9 @@ import string
 from django.contrib.auth.models import User, Permission
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-
+import logging
+from django.contrib.auth.hashers import make_password
+from .permisions import remove_duplicate_permissions
 
 CustomUser = get_user_model()
 
@@ -27,88 +29,100 @@ def generate_random_password():
 @csrf_exempt
 @login_required
 def create_client(request):
-    if not request.user.has_perm('accounts.can_create_client'):
-        return HttpResponseBadRequest("You don't have permission to create clients.")
-    
-    clients = Client.objects.all()  # Define clients variable outside the if-else block
-
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
-            # Set the user before saving the form
             client = form.save(commit=False)
-            client.user = request.user  # You can directly assign the request.user
+            client.user = request.user
             client.creator_id = request.user.id
             client.save()
 
-            # Create user and assign permission
+            # Generate a random password
             password = generate_random_password()
-            user = User.objects.create_user(username=client.email, password=password)
-            user.user_permissions.add(Permission.objects.get(codename='can_login_as_guest'))
-            print("clint username", client.username)
-            print("Client after saving:", client.email)
-            print("Client after saving:", client.phoneNumber)
-            print("Client after saving:", client.rentPayDate)
-            print("Client after saving:", client.rentEndDate)
-            print("creatorid", client.creator_id)
-            print("pass", password)
+            
+            # Check if a user with the same email already exists
+            user_exists = User.objects.filter(username=client.email).exists()
+            if not user_exists:
+                # Create a new User object
+                user = User.objects.create(username=client.email)
+                
+                # Assign the 'can_login_as_guest' permission to the user if not already assigned
+                try:
+                    permission = Permission.objects.get(codename='can_login_as_guest')
+                except Permission.DoesNotExist:
+                    # Create the permission if it doesn't exist
+                    permission = Permission.objects.create(codename='can_login_as_guest', name='Can log in as guest')
 
-            # Set the password directly on the User object
+                # Check if the permission is not already assigned to the user
+                if not user.has_perm('accounts.can_login_as_guest'):
+                    user.user_permissions.add(permission)
+            else:
+                # Return a JSON response indicating that the email already exists
+                return JsonResponse({'success': False, 'message': 'User with this email already exists'})
+                
+            # Set the password and save the user
             user.set_password(password)
-            # password.save()
             user.save()
-
-            # Refresh clients after saving new client
-            clients = Client.objects.all()
-
-            print('Generated password:', password)
-
-        return render(request, 'host.html', {'clients': clients})
+                
+            # Log the details
+            print("Client username:", client.username)
+            print("Client email:", client.email)
+            print("Client phone number:", client.phoneNumber)
+            print("Client rent pay date:", client.rentPayDate)
+            print("Client rent end date:", client.rentEndDate)
+            print("Creator ID:", client.creator_id)
+            print("Generated password:", password)
+                
+            # Return a success response
+            return JsonResponse({'success': True, 'message': 'Client created successfully', 'password': password})
+            
+        else:
+            # Return a JSON response with form errors
+            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
     else:
-        form = ClientForm()
-    
-    return render(request, 'host.html', {'clients': clients, 'form': form})
+        # Return a JSON response for invalid request method
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+logger = logging.getLogger(__name__)
 
+@csrf_exempt
 @csrf_exempt
 def guest_login(request):
     if request.method == 'POST':
         form = GuestLoginForm(request.POST)
         
-        # Print the user before processing the form submission
-        print("User before form submission:", request.user)
-    
+        # Check if the form data is valid
         if form.is_valid():
-            email = form.cleaned_data.get('email')  # Corrected to 'email'
-            print("Email:", email)
+            # Extract email and password from the form
+            email = form.cleaned_data.get('email')
+            print(email)
             password = form.cleaned_data.get('password')
-            print("Password:", password)
-            user = authenticate(request, username=email, password=password)  # Passing 'email' as username
+            print("email")
+            # print("user:", User.objects.get(username=email)
+            print(password)
+            
+            # Authenticate the user
+            user = authenticate(request, username=email, password=password)
+            
+            # Check if authentication is successful
             if user:
-                print("User after authentication:", user)
-                print("User has permission to log in as guest:", user.has_perm('accounts.can_login_as_guest'))
-                # Log in the user
-                login(request, user)
-                return redirect('/guest/')
+                # Check if the user has the required permission
+                # if user.has_perm('can_login_as_guest'):
+                    # Log in the user
+                    login(request, user)
+                    return redirect('/guest/')
+                # else:
+                    # User does not have the required permission
+                    return JsonResponse({'success': False, 'message': 'User does not have permission to login as guest'})
             else:
-                # Handle invalid credentials
+                # Invalid email or password
                 return JsonResponse({'success': False, 'message': 'Invalid email or password'})
         else:
-            # Handle form validation errors
-            if 'email' in form.errors:
-                error_message = 'Email is required.'
-            elif 'password' in form.errors:
-                error_message = 'Password is required.'
-            else:
-                error_message = 'Invalid email or password.'
-            
-            return JsonResponse({'success': False, 'message': error_message})
+            # Form validation failed
+            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
     else:
         # Handle GET request by rendering the login form
         form = GuestLoginForm()
         return render(request, 'guest_login.html', {'form': form})
-
-
-
 
 # display all clients
 def display_clients(request):

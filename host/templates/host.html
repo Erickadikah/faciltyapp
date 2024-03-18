@@ -209,21 +209,14 @@
             <div class="form-group">
               <label for="email">Email</label>
               <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
-              <small class="form-text text-white">You can change your email in the settings page.</small>
             </div>
             <div class="form-group">
               <label for="phone">Phone</label>
               <input type="text" class="form-control" id="phone" value="{{ user.phone }}" readonly>
-              <small class="form-text text-white">You can change your phone number in the settings page.</small>
             </div>
-            {% comment %} <div class="form-group">
-              <label for="rentPayDate">Clients</label>
-              <input type="date" class="form-control" id="client_count" value="{{ client_count }}" readonly>
-            </div> {% endcomment %}
             <div class="form-group">
               <label for="address">Address</label>
               <input type="text" class="form-control" id="address" value="{{ user.address }}" readonly>
-              <small class="form-text text-white">You can change your address in the settings page.</small>
             </div>
             <button type="button" class="btn btn-primary mt-3" id="editProfileBtn">Edit Profile</button>
             <button type="button" class="btn btn-secondary mt-3" id="closeProfileBtn">Close</button>
@@ -232,7 +225,6 @@
             <button type="button" class="btn btn-secondary mt-3" id="cancelProfileBtn" style="display: none">Cancel</button>
             <button type="button" class="btn btn-danger mt-3" id="confirmDeleteProfileBtn" style="display: none">Confirm Delete</button>
             <button type="button" class="btn btn-secondary mt-3" id="cancelDeleteProfileBtn" style="display: none">Cancel Delete</button>
-            <small class="form-text text-white">You can delete your profile in the settings page.</small>
           </form>
         </div>
       </div>

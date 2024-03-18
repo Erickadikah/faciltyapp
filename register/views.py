@@ -9,12 +9,20 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-@login_required # This is a custom decorator
 def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
+        # print("form: ", form)
         if form.is_valid():
             user = form.save()
+            print("user: ", user)
+            print("username", user.username)
+            print("password", user.password)
+            print("email", user.email)
+            # print("phone", user.phone)
+            print("address", user.address)
+            print("eircode", user.eircode)
+            print("country", user.country)
             # You don't need to authenticate the user after registration,
             # because the user is already created and authenticated by the save() method
             login(request, user)
@@ -51,6 +59,10 @@ def user_list(request):
             'id': user.id,
             'username': user.username,
             'email': user.email,
+            # 'phone': user.phone,
+            # 'address': user.address,
+            # 'eircode': user.eircode,
+            # 'country': user.country,
             # Add more fields as needed
         }
         user_list.append(user_data)
@@ -64,6 +76,7 @@ def user(request, user_id):
             'id': user.id,
             'username': user.username,
             'email': user.email,
+            # 'phone': user.phone,
             # Add more fields as needed
         }
         return JsonResponse(user_data)

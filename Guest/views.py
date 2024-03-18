@@ -8,16 +8,16 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-# def index(request):
-#     if request.user.is_authenticated:
-#         client = Client.objects.filter(user=request.user.id).first()
-#         print(client)
-#         return render(request, 'guest.html', {'client': client})
-#     else:
-#         return HttpResponse("You must be logged in to view this page.")
-
 def index(request):
-    return render(request, 'guest.html')
+    if request.user.is_authenticated:
+        client = Client.objects.filter(user=request.user.id).first()
+        print(client)
+        return render(request, 'guest.html', {'client': client})
+    else:
+        return HttpResponse("You must be logged in to view this page.")
+
+# def index(request):
+#     return render(request, 'guest.html', )
 
 def dashboard(request):
     client = Client.objects.get(user=request.user)
