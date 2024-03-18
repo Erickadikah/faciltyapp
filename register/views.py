@@ -79,7 +79,7 @@ def user(request, user_id):
             'id': user.id,
             'username': user.username,
             'email': user.email,
-            'phone': user.phone,
+            # 'phone': user.phone,
             # Add more fields as needed
         }
         return JsonResponse(user_data)

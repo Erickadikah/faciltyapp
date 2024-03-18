@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Message</title>
+</head>
+<body>
+    <h1>Send Message to {{ client.username }}</h1>
+    <form id="sendMessageForm_{{ client.id }}" method="post" enctype="multipart/form-data" action="{% url 'send_message' client.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="messageText_{{ client.id }}">Message:</label>
+          <textarea class="form-control" id="messageText_{{ client.id }}" name="message_text" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fileInput">File:</label>
+          <input type="file" class="form-control-file" id="fileInput" name="file" />
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
+</body>
+</html>

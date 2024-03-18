@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Scheduler</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h2 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+    .task {
+      margin-bottom: 20px;
+    }
+    .task label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .task input[type="text"],
+    .task select {
+      width: calc(100% - 130px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .task button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+    }
+    .task button:hover {
+      background-color: #0056b3;
+    }
+    .task-container {
+      display: flex;
+      align-items: center;
+    }
+    .task-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .task-item {
+      background-color: #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .task-item p {
+      margin: 0;
+      color: #333;
+    }
+    .task-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-details div {
+      flex: 1;
+    }
+    @media (max-width: 600px) {
+      .task input[type="text"],
+      .task select {
+        width: calc(100% - 110px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Maintenance Scheduler</h1>
+
+  <div class="section">
+    <h2>Lawn and Walkway Scheduler</h2>
+    <div class="task">
+      <div class="task-container">
+        <label for="lawn">Task:</label>
+        <input type="text" id="lawn" placeholder="Enter task description">
+        <select id="lawn-assignee">
+          <option value="">Assignee</option>
+          <option value="John">John</option>
+          <option value="Doe">Doe</option>
+          <!-- Add more options as needed -->
+        </select>
+        <input type="date" id="lawn-date">
+        <button onclick="addTask('lawn')">Add Task</button>
+      </div>
+    </div>
+    <ul id="lawn-tasks" class="task-list"></ul>
+  </div>
+
+  <div class="section">
+    <h2>Kitchen and Living Room Trash Scheduler</h2>
+    <div class="task">
+      <div class="task-container">
+        <label for="trash">Task:</label>
+        <input type="text" id="trash" placeholder="Enter task description">
+        <select id="trash-assignee">
+          <option value="">Assignee</option>
+          <option value="Alice">Alice</option>
+          <option value="Bob">Bob</option>
+          <!-- Add more options as needed -->
+        </select>
+        <input type="date" id="trash-date">
+        <button onclick="addTask('trash')">Add Task</button>
+      </div>
+    </div>
+    <ul id="trash-tasks" class="task-list"></ul>
+  </div>
+</div>
+
+<script>
+  function addTask(type) {
+    const description = document.getElementById(type).value;
+    const assignee = document.getElementById(type + '-assignee').value;
+    const date = document.getElementById(type + '-date').value;
+
+    if (!description || !assignee || !date) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const taskItem = document.createElement('li');
+    taskItem.classList.add('task-item');
+    taskItem.innerHTML = `
+      <div class="task-details">
+        <div>
+          <p><strong>Task:</strong> ${description}</p>
+          <p><strong>Assignee:</strong> ${assignee}</p>
+        </div>
+        <div>
+          <p><strong>Due Date:</strong> ${date}</p>
+        </div>
+      </div>
+    `;
+
+    if (type === 'lawn') {
+      document.getElementById('lawn-tasks').appendChild(taskItem);
+    } else if (type === 'trash') {
+      document.getElementById('trash-tasks').appendChild(taskItem);
+    }
+
+    // Clear input fields after adding task
+    document.getElementById(type).value = '';
+    document.getElementById(type + '-assignee').value = '';
+    document.getElementById(type + '-date').value = '';
+  }
+</script>
+
+</body>
+</html>

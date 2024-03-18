@@ -38,3 +38,13 @@ class GuestPermission(models.Model):
             ('can_login_as_guest', 'Can log in as guest'),
             ('cant_login_as_host', 'Can not log in as host')
         ]
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    file = models.FileField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Message from {self.sender} to {self.recipient}"

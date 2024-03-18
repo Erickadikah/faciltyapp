@@ -8,6 +8,6 @@ urlpatterns = [
     path('create_client/', create_client, name='create_client'),
     path('display_clients/', display_clients, name='display_clients'),
     path('get_client/<int:client_id>/', get_client, name='get_client'),
-
-
+    path('maintenance.html', views.maintenance_view, name='maintenance'),
+    path('send_message/<int:client_id>/', views.send_message, name='send_message'),
 ]

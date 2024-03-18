@@ -87,6 +87,7 @@
     #userProfile {
       position: fixed;
       top: 80px;
+      width: 400px;
       left: 250px;
       z-index: 100;
       background-color: #fff;
@@ -146,7 +147,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="#" id="maintenance-link" >
           <i class="fas fa-file-alt fa-lg"></i>
         </a>
       </li>
@@ -335,7 +336,7 @@
         </div>
         <!--message form-->
         <!-- Modify the form in your HTML template to include a file input field -->
-        <form id="sendMessageForm_{{ client.id }}" method="post" enctype="multipart/form-data">
+        <form id="sendMessageForm_{{ client.id }}" method="post" enctype="multipart/form-data" action="{% url 'send_message' client.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label for="messageText_{{ client.id }}">Message:</label>
@@ -366,6 +367,13 @@
 </div>
     </div>
   </div>
+
+  <div id="maintenance-container" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow-y: auto; background-color: #fff; z-index: 1000;">
+    <!-- Content of maintenance.html goes here -->
+    <!-- For example: -->
+    <h1>Maintenance Page</h1>
+    <p>This is the maintenance page content.</p>
+</div>
 
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -531,7 +539,28 @@
           $("#sendMessageForm").hide();
         }
       });
-    });    
+    });
+    function toggleMaintenancePage() {
+      var maintenanceContainer = document.getElementById("maintenance-container");
+
+      // Check if maintenance.html is already loaded
+      if (maintenanceContainer.innerHTML.trim() === "") {
+        // Load maintenance.html content using fetch API
+        fetch("maintenance.html")
+          .then(response => response.text())
+          .then(html => maintenanceContainer.innerHTML = html)
+          .catch(error => console.error("Error loading maintenance.html:", error));
+      } else {
+        // Clear maintenance.html content
+        maintenanceContainer.innerHTML = "";
+      }
+    }
+
+    // Add click event listener to the maintenance link
+    document.getElementById("maintenance-link").addEventListener("click", function(event) {
+      event.preventDefault(); // Prevent default link behavior
+      toggleMaintenancePage(); // Toggle maintenance.html page
+    });
   </script>
 </body>
 </html>

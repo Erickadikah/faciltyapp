@@ -25,7 +25,7 @@ from django.conf import settings
 # from guest.views import user_profile
 from register.views import user, user_list
 # from Guest.views import 
-from host.views import get_client, get_user, display_users, get_all_clients
+from host.views import get_client, get_user, display_users, get_all_clients, send_message, get_messages
 from Guest.views import upload_document
 
 
@@ -52,6 +52,8 @@ urlpatterns = [
     path('display_users/', display_users, name='display_users'),
     path('get_all_clients/', get_all_clients, name='get_all_clients'),
     path('upload/', upload_document, name='upload_document'),
+    path('send_message/<int:client_id>/', send_message, name='send_message'),
+    path('get_messages/<int:client_id>/', get_messages, name='get_messages')
 
 
 

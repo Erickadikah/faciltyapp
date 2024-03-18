@@ -16,6 +16,10 @@ import logging
 from django.contrib.auth.hashers import make_password
 from .permisions import remove_duplicate_permissions
 from django.contrib.auth.hashers import check_password
+# from .forms import MessageForm
+from django.contrib import messages
+from .models import Message
+
 
 CustomUser = get_user_model()
 
@@ -177,3 +181,38 @@ def get_all_clients(request):
         
         # Return the serialized client data as JSON response
         return JsonResponse({'clients': client_data})
+    
+def maintenance_view(request):
+    return render(request, 'maintenance.html')
+
+#sendig message
+@csrf_exempt
+def send_message(request, client_id):
+    if request.method == 'POST':
+        sender = request.user
+        recipient = User.objects.get(pk=client_id)
+        content = request.POST.get('message_text')
+        file = request.FILES.get('file')
+
+        message = Message.objects.create(sender=sender, recipient=recipient, content=content, file=file)
+        messages.success(request, 'Message sent successfully!')
+        return JsonResponse({'success': True, 'message': 'Message sent successfully'})
+        # return redirect('client_detail', client_id=client.id)  # Redirect to client detail page or any other page
+
+    return render(request, 'send_message.html')
+
+def get_messages(request, client_id):
+    messages = Message.objects.filter(recipient_id=client_id)
+    # Serialize messages as JSON
+    serialized_messages = []
+    for message in messages:
+        serialized_message = {
+            'sender': message.sender.username,
+            'content': message.content,
+            'timestamp': message.created_at,
+            'file_url': message.file.url if message.file else None  # Include file URL if file exists
+        }
+        serialized_messages.append(serialized_message)
+    return JsonResponse(serialized_messages, safe=False)
+
+#delete messages
