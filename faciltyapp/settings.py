@@ -75,6 +75,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'faciltyapp/static'),
 ]
 
+# AUTH_USER_MODEL = 'host.Client'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 

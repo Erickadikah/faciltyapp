@@ -8,24 +8,26 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+# registration view for the host
 @csrf_exempt
 def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
-        # print("form: ", form)
         if form.is_valid():
-            user = form.save()
-            print("user: ", user)
-            print("username", user.username)
-            print("password", user.password)
-            print("email", user.email)
-            # print("phone", user.phone)
-            print("address", user.address)
-            print("eircode", user.eircode)
-            print("country", user.country)
-            # You don't need to authenticate the user after registration,
-            # because the user is already created and authenticated by the save() method
+            user = form.save(commit=False)  # Don't save to database yet
+            # Access additional fields from the form instance
+            phone = form.cleaned_data.get('phone')
+            address = form.cleaned_data.get('address')
+            eircode = form.cleaned_data.get('eircode')
+            country = form.cleaned_data.get('country')
+            # Set the additional fields on the user object
+            user.phone = phone
+            user.address = address
+            user.eircode = eircode
+            user.country = country
+            user.save()  # Save user with additional fields
             login(request, user)
+            messages.success(request, "Registration successful. You are now logged in.")
             return redirect("/login/")  # Redirect to login page or any other page after registration
         else:
             # Display error messages if the form is invalid
@@ -36,6 +38,7 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, "register.html", {"form": form})
 
+# this is the login view as a host
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -76,7 +79,7 @@ def user(request, user_id):
             'id': user.id,
             'username': user.username,
             'email': user.email,
-            # 'phone': user.phone,
+            'phone': user.phone,
             # Add more fields as needed
         }
         return JsonResponse(user_data)

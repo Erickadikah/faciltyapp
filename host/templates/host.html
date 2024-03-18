@@ -100,15 +100,13 @@
       color: white;
     }
     #notificationSection {
-      left: 240px; /* Adjusted position for better alignment */
+      left: 100px; /* Adjusted position for better alignment */
       position: fixed;
-      top: 120px;
+      top: 80px;
       z-index: 99;
       width: 400px;
       padding: 20px;
       display: none;
-      {% comment %} margin-right: 30px; {% endcomment %}
-      {% comment %} margin-left: 40px; /* Adjusted margin for better alignment */ {% endcomment %}
     }
   </style>
 
@@ -143,7 +141,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" id="notificationLink">
+        <a class="nav-link" href="#" id="notificationLinkSidebar">
           <i class="fas fa-bell fa-lg"></i>
         </a>
       </li>
@@ -229,20 +227,47 @@
         </div>
       </div>
 
-   <!-- Notification section -->
-   <div id="notificationSection" style="display: none">
+  <!-- Notification section -->
+  <div id="notificationSection" style="display: none;">
     <!-- Notification content here -->
-    <div class="card">
-      <div class="card-header">
+    <div class="card border-0">
+      <div class="card-header bg-success text-white">
         <h5 class="card-title mb-0">Notifications</h5>
       </div>
-      <div class="card-body">
-        <ul>
-          <li>Notification 1</li>
-          <li>Notification 2</li>
-          <li>Notification 3</li>
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">New Message from John Doe</h6>
+                <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.</p>
+                <small class="text-muted">Just now</small>
+              </div>
+              <span class="badge badge-primary">New</span>
+            </div>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">Meeting Reminder</h6>
+                <p class="mb-1">Don't forget about the meeting tomorrow at 10:00 AM in Conference Room A.</p>
+                <small class="text-muted">2 hours ago</small>
+              </div>
+              <span class="badge badge-secondary">Old</span>
+            </div>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">Urgent: Server Maintenance</h6>
+                <p class="mb-1">Scheduled maintenance for the server will start in 30 minutes. Please make sure all work is saved.</p>
+                <small class="text-muted">Yesterday</small>
+              </div>
+              <span class="badge badge-warning">Urgent</span>
+            </div>
+          </a>
           <!-- Add more notifications as needed -->
-        </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -352,32 +377,39 @@
         var userId = $(this).data("user-id");
         $("#user_card_" + userId + " .user-details").toggle();
       });
-
+    
       // Toggle message form when clicking the "Message" button
       $(".message-button").on("click", function () {
         var userId = $(this).data("user-id");
         $("#sendMessageForm_" + userId).toggle(); // Corrected ID here
       });
-
+    
       // Toggle sidebar
       $("#sidebarCollapseBtn").on("click", function () {
         $(".sidebar").toggleClass("collapsed");
         $(".main-content").toggleClass("collapsed");
       });
-
+    
       // Toggle user creation form when clicking the button
       $("#toggleUserForm").on("click", function () {
         $("#userCreationForm").toggleClass("show");
         $("#overlay").toggleClass("show"); // Toggle overlay
       });
-
+    
       // Show profile section
       $("#profileLink").click(function () {
         $("#userProfile").toggle();
         $("#notificationSection").hide();
         $("#uploadDocumentsSection").hide();
       });
-
+    
+      // Toggle notification section when clicking the notification links
+      $("#notificationLinkSidebar, #notificationLinkMainContent").click(function () {
+        $("#notificationSection").toggle();
+        $("#userProfile").hide();
+        $("#uploadDocumentsSection").hide();
+      });
+    
       $("#editProfileBtn").click(function () {
         // Code to enable editing fields
         $("#editProfileBtn").hide();
@@ -385,7 +417,7 @@
         $("#saveProfileBtn").show();
         $("#cancelProfileBtn").show();
       });
-
+    
       // Cancel editing profile
       $("#cancelProfileBtn").click(function () {
         // Code to revert changes
@@ -394,7 +426,7 @@
         $("#saveProfileBtn").hide();
         $("#cancelProfileBtn").hide();
       });
-
+    
       // Delete profile
       $("#deleteProfileBtn").click(function () {
         // Code to prompt confirmation
@@ -403,7 +435,7 @@
         $("#confirmDeleteProfileBtn").show();
         $("#cancelDeleteProfileBtn").show();
       });
-
+    
       // Cancel profile deletion
       $("#cancelDeleteProfileBtn").click(function () {
         // Code to cancel deletion
@@ -412,7 +444,7 @@
         $("#confirmDeleteProfileBtn").hide();
         $("#cancelDeleteProfileBtn").hide();
       });
-
+    
       // Submit user creation form
       $("#createUserForm").on("submit", function (event) {
         event.preventDefault();
@@ -423,14 +455,7 @@
           rentPayDate: $("#rentPayDate").val(),
           rentEndDate: $("#rentEndDate").val(),
         };
-
-        // Show notification section
-        $("#notificationLink").click(function () {
-          $("#notificationSection").toggle();
-          $("#userProfile").hide();
-          $("#uploadDocumentsSection").hide();
-        });
-
+    
         // Send form data to the backend (Django view)
         $.ajax({
           type: "POST",
@@ -438,8 +463,10 @@
           data: formData,
           success: function (response) {
             // Handle successful response (if needed)
-            console.log(data);
             console.log(response);
+            // Close the user creation form
+            $("#userCreationForm").removeClass("show");
+            $("#overlay").removeClass("show");
             // Refresh the page or update the user list, etc.
             window.location.reload();
           },
@@ -449,7 +476,7 @@
           },
         });
       });
-
+    
       // Delete client when clicking the "Delete" button
       $(".delete-button").on("click", function () {
         var userId = $(this).data("user-id");
@@ -468,15 +495,15 @@
           });
         }
       });
-
+    
       // Submit message form when clicking the "Send Message" button
       $(".message-button").on("click", function () {
         var userId = $(this).data("user-id");
-
+    
         $("#sendMessageForm_" + userId).on("submit", function (event) {
           event.preventDefault();
           var formData = new FormData(this); // Create FormData object from the form
-
+    
           // Send form data to the backend (Django view)
           $.ajax({
             type: "POST",
@@ -496,7 +523,7 @@
           });
         });
       });
-
+    
       // Close message form if clicking outside of it
       $(document).on("click", function (event) {
         if (!$(event.target).closest("#sendMessageForm").length) {
@@ -504,7 +531,7 @@
           $("#sendMessageForm").hide();
         }
       });
-    });
+    });    
   </script>
 </body>
 </html>

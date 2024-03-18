@@ -59,7 +59,7 @@
     .card {
       margin-bottom: 20px;
       border: none;
-      border-radius: 10px;
+      {% comment %} border-radius: 10px; {% endcomment %}
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
     .card-header {
@@ -121,7 +121,7 @@
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
         <!-- Show logged-in user's name here -->
-        {% if user.is_authenticated %}
+        {% if authenticated %}
         <li class="nav-item">
           <a class="nav-link text-success" href="#"> {{ client.username }} </a>
         </li>
@@ -141,6 +141,11 @@
         <a class="nav-link" href="#" id="notificationLink"
           ><i class="fas fa-bell fa-lg"></i
         ></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fas fa-file-alt fa-lg"></i>
+        </a>
       </li>
     </ul>
   </div>
@@ -164,7 +169,7 @@
                       <div class="row">
                           <div class="col-sm-6">
                               <h6 class="card-subtitle mb-2 text-muted">Next Payment Due</h6>
-                              <p class="card-text">{{client.rentPayDate}}</p>
+                              <p class="card-text">{{client.rentEndDate}}</p>
                           </div>
                           <div class="col-sm-6">
                               <h6 class="card-subtitle mb-2 text-muted">Payment Status</h6>
@@ -172,14 +177,14 @@
                           </div>
                       </div>
                       <div class="text-center">
-                          {% comment %} <button type="button" class="btn btn-primary">Make Payment</button> {% endcomment %}
-                          <button type="button" class="btn btn-secondary" id="toggleDetailsBtn">View
-                              Details</button>
+                          <button type="button" class="" id="toggleDetailsBtn">View
+                              Details
+                            </button>
                       </div>
                       <!-- Additional details section -->
                       <div id="detailsSection" style="display: none;">
                           <h6 class="mt-3">More info</h6>
-                          <p> Paid:{{ client.rentPayDate }}</p>
+                          <p> Paid:{{client.rentPayDate }}</p>
                           <p> Ends:{{ client.rentEndDate }}</p>
                           <button type="button" class="btn btn-primary">Dowload Receipt</button>
                       </div>
@@ -187,7 +192,7 @@
               </div>
 
           </div>
-          <div class="col-md-5 g-5">
+          <div class="col-md-6 g-5">
               <div class="card border-secondary mt-3">
                   <div class="card-header bg-success text-white">
                       <h5 class="card-title mb-0">Shared House Items</h5>
@@ -240,7 +245,7 @@
                   </div>
               </div>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6">
               <div class="card border-primary mt-5">
                   <div class="card-header bg-primary text-white">
                       <h5 class="card-title mb-0">Upload Signed Documents</h5>
@@ -262,6 +267,21 @@
                   </div>
               </div>
           </div>
+          <div class="col-md-6">
+              <div class="card border-primary mt-5">
+                  <div class="card-header bg-primary text-white">
+                      <h5 class="card-title mb-0 text-center">View Documents</h5>
+                      <ul class="list-group g-10">
+                          <li class="list-group mb-2">
+                          <a href="#" class="list-group-item list-group-item-action">Signed Lease Agreement</a>
+                          </li>
+                          <li class="list-group mb-2">
+                          <a href="#" class="list-group-item list-group-item-action">Payment Receipt</a>
+                          </li>
+                      </ul>
+                    </div>
+                    </div>
+                    </div>
       </div>
   </div>
 </div> 

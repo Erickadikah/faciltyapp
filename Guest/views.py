@@ -4,30 +4,31 @@ from host.views import Client
 from .models import UploadedDocument
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, HttpResponse
+
 
 
 # Create your views here.
-
+# this is the client dashboard
+@login_required
+@csrf_exempt
 def index(request):
-    if request.user.is_authenticated:
-        client = Client.objects.filter(user=request.user.id).first()
-        print(client)
-        return render(request, 'guest.html', {'client': client})
+    # Check if the client is authenticated
+    if 'client_id' in request.session:
+        # Retrieve the client ID from the session
+        client_id = request.session['client_id']
+        
+        # Retrieve the client based on the client ID
+        try:
+            client = Client.objects.get(id=client_id)
+            return render(request, 'guest.html', {'client': client, 'authenticated': True})
+        except Client.DoesNotExist:
+            return HttpResponse("Client not found")
     else:
-        return HttpResponse("You must be logged in to view this page.")
+        return HttpResponse("You must be as our client logged in to view this page.")
 
-# def index(request):
-#     return render(request, 'guest.html', )
 
-def dashboard(request):
-    client = Client.objects.get(user=request.user)
-
-    context = {
-        'user': request.user,
-        'client': client  # Pass the client object to the template context
-    }
-
-    return render(request, 'guest.html', context)
 @csrf_exempt
 def upload_document(request):
     if request.method == 'POST' and request.FILES['uploadFile']:

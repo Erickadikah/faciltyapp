@@ -2,11 +2,13 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
+from django.contrib.auth.hashers import make_password
+import random
+import string
 
 CustomUser = get_user_model()
 
 class Client(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_clients')
     creator_id = models.IntegerField()
     username = models.CharField(max_length=120)
     email = models.EmailField(unique=True)
@@ -14,7 +16,18 @@ class Client(models.Model):
     address = models.CharField(max_length=120)
     rentPayDate = models.DateField()
     rentEndDate = models.DateField()
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    password = models.CharField(max_length=128, blank=True)  # Make sure the field allows blank values
+    
+    def save(self, *args, **kwargs):
+        if not self.password:  # Check if a password is provided
+            self.password = self.generate_random_password()  # Generate a random password if not provided
+        else:
+            self.password = make_password(self.password)  # Hash the provided password
+        super().save(*args, **kwargs)
+    
+    def generate_random_password(self):
+        # Generate a random password of length 8
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     def __str__(self):
         return self.username
