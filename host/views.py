@@ -19,6 +19,7 @@ from django.contrib.auth.hashers import check_password
 # from .forms import MessageForm
 from django.contrib import messages
 from .models import Message
+from django.views.decorators.http import require_POST
 
 
 CustomUser = get_user_model()
@@ -197,6 +198,7 @@ def send_message(request, client_id):
         message = Message.objects.create(sender=sender, recipient=recipient, content=content, file=file)
         messages.success(request, 'Message sent successfully!')
         return JsonResponse({'success': True, 'message': 'Message sent successfully'})
+        # return JsonResponse({'success': True, 'message': 'Message sent successfully'})
         # return redirect('client_detail', client_id=client.id)  # Redirect to client detail page or any other page
 
     return render(request, 'send_message.html')
@@ -207,6 +209,7 @@ def get_messages(request, client_id):
     serialized_messages = []
     for message in messages:
         serialized_message = {
+            'id': message.id,
             'sender': message.sender.username,
             'content': message.content,
             'timestamp': message.created_at,
@@ -216,3 +219,16 @@ def get_messages(request, client_id):
     return JsonResponse(serialized_messages, safe=False)
 
 #delete messages
+@require_POST
+@csrf_exempt
+def delete_message(request, message_id):
+    try:
+        # Check if the message exists
+        message = Message.objects.get(pk=message_id)
+        # Delete the message
+        message.delete()
+        return JsonResponse({'message': 'Message deleted successfully'}, status=200)
+    except Message.DoesNotExist:
+        return JsonResponse({'error': 'Message not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
