@@ -9,6 +9,7 @@ import string
 CustomUser = get_user_model()
 
 class Client(models.Model):
+    raw_password = models.CharField(max_length=128, blank=True, null=True)
     creator_id = models.IntegerField()
     username = models.CharField(max_length=120)
     email = models.EmailField(unique=True)

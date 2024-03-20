@@ -25,7 +25,7 @@ from django.conf import settings
 # from guest.views import user_profile
 from register.views import user, user_list
 # from Guest.views import 
-from host.views import get_client, get_user, display_users, get_all_clients, send_message, get_messages, delete_message
+from host.views import get_client, get_user, display_users, get_all_clients, send_message, get_messages, delete_message, update_client
 from Guest.views import upload_document
 
 
@@ -38,15 +38,11 @@ urlpatterns = [
     path('login/', v.login_view, name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('create_client/', create_client, name='create_client' ),
-    # path('delete_client/<int:id>/', delete_client, name='delete_client'),
-    # path('send_message/', send_message, name='send_message'),
     path('display_clients/', display_clients, name='display_clients'),
     path('delete_client/<int:id>/', delete_client, name='delete_client'),
     path('guest_login/', guest_login, name='guest_login'),
-    # path('user/profile/', user_profile, name='user_profile')
     path('user/<int:user_id>/', user, name='user_detail'),
     path('user_list/', user_list, name='user_list'),
-    # path('dashboard/', dashboard, name='dashboard')
     path('get_client/<int:user_id>/<int:client_id>/', get_client, name='get_client'),
     path('get_user/<int:user_id>/', get_user, name='get_user'),
     path('display_users/', display_users, name='display_users'),
@@ -54,10 +50,8 @@ urlpatterns = [
     path('upload/', upload_document, name='upload_document'),
     path('send_message/<int:client_id>/', send_message, name='send_message'),
     path('get_messages/<int:client_id>/', get_messages, name='get_messages'),
-    path('delete_message/<int:message_id>/', delete_message, name='delete_message')
-
-
-
+    path('delete_message/<int:message_id>/', delete_message, name='delete_message'),
+    path('update_client/<int:client_id>/', update_client, name='update_client'),
 ]
 
 if settings.DEBUG:

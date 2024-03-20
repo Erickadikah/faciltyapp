@@ -23,7 +23,7 @@ from django.views.decorators.http import require_POST
 
 
 CustomUser = get_user_model()
-
+@login_required
 def index(request):
     clients = Client.objects.filter(creator_id=request.user.id)
     return render(request, "host.html", {'clients': clients})
@@ -42,12 +42,20 @@ def create_client(request):
         if form.is_valid():
             client = form.save(commit=False)
             client.creator_id = request.user.id  # or however you want to track the creator
-            client.save()  # Make sure to save the client instance to trigger the save() method
             
-            # Ensure that the password is generated and saved after the client object is saved
-            client.password = client.generate_random_password()  # Generate a random password
-            print("Password:", client.password)  # Make sure the password is populated before saving
-            client.save()  # Save the client object again to update the password field
+            # Generate a random password
+            raw_password = client.generate_random_password()
+            print("Raw Password:", raw_password)  # Print the raw password
+            
+            # Hash the raw password
+            hashed_password = make_password(raw_password)
+            print("Hashed Password:", hashed_password)  # Print the hashed password
+            
+            # Save both raw and hashed passwords
+            client.raw_password = raw_password
+            client.password = hashed_password
+            
+            client.save()  # Save the client instance to trigger the save() method
             
             # Log the details (optional)
             print("Client username:", client.username)
@@ -56,7 +64,6 @@ def create_client(request):
             print("Client rent pay date:", client.rentPayDate)
             print("Client rent end date:", client.rentEndDate)
             print("Creator ID:", client.creator_id)
-            print("Password:", client.password)  # Make sure the password is populated after saving
             
             # Return a success response
             return JsonResponse({'success': True, 'message': 'Client created successfully'})
@@ -66,8 +73,24 @@ def create_client(request):
     else:
         # Return a JSON response for invalid request method
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
- 
 logger = logging.getLogger(__name__)
+
+#update client
+@csrf_exempt
+def update_client(request, client_id):
+    if request.method == 'POST':
+        client = get_object_or_404(Client, id=client_id)  # Corrected 'id' to 'client_id'
+        form = ClientForm(request.POST, instance=client)
+        print("Password:", client.password)
+        if form.is_valid():
+            client = form.save(commit=False)
+            client.creator_id = request.user.id  # or however you want to track the creator
+            client.save()  # Make sure to save the client instance to trigger the save() method
+            return JsonResponse({'success': True, 'message': 'Client updated successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
 #this is the login view as a guest
 @csrf_exempt
@@ -187,37 +210,55 @@ def maintenance_view(request):
     return render(request, 'maintenance.html')
 
 #sendig message
+# @login_required
 @csrf_exempt
 def send_message(request, client_id):
     if request.method == 'POST':
         sender = request.user
-        recipient = User.objects.get(pk=client_id)
+        print("Sender:", sender)  # Check sender
+        try:
+            recipient = User.objects.get(pk=client_id)
+            print("Recipient:", recipient)  # Check recipient
+        except User.DoesNotExist:
+            print("User does not exist")  # Print error message
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+        
         content = request.POST.get('message_text')
         file = request.FILES.get('file')
 
         message = Message.objects.create(sender=sender, recipient=recipient, content=content, file=file)
         messages.success(request, 'Message sent successfully!')
         return JsonResponse({'success': True, 'message': 'Message sent successfully'})
-        # return JsonResponse({'success': True, 'message': 'Message sent successfully'})
-        # return redirect('client_detail', client_id=client.id)  # Redirect to client detail page or any other page
-
+    
     return render(request, 'send_message.html')
 
-def get_messages(request, client_id):
-    messages = Message.objects.filter(recipient_id=client_id)
-    # Serialize messages as JSON
-    serialized_messages = []
-    for message in messages:
-        serialized_message = {
-            'id': message.id,
-            'sender': message.sender.username,
-            'content': message.content,
-            'timestamp': message.created_at,
-            'file_url': message.file.url if message.file else None  # Include file URL if file exists
-        }
-        serialized_messages.append(serialized_message)
-    return JsonResponse(serialized_messages, safe=False)
 
+# def get_messages(request, client_id):
+#     messages = Message.objects.filter(recipient_id=client_id)
+#     # Serialize messages as JSON
+#     serialized_messages = []
+#     for message in messages:
+#         serialized_message = {
+#             'id': message.id,
+#             'sender': message.sender.username,
+#             'content': message.content,
+#             'timestamp': message.created_at,
+#             'file_url': message.file.url if message.file else None  # Include file URL if file exists
+#         }
+#         serialized_messages.append(serialized_message)
+#     return JsonResponse(serialized_messages, safe=False)
+
+# get all messages from the database
+def get_messages(request, client_id):
+    if request.method == 'GET':
+        # Retrieve all messages sent to the specified client
+        messages = Message.objects.filter(recipient_id=client_id)
+        
+        # Serialize message data into JSON format
+        message_data = [{'id': message.id, 'sender': message.sender.username, 'content': message.content, 'file': message.file.url if message.file else None, 'created_at': message.created_at} for message in messages]
+        
+        # Return the serialized message data as JSON response
+        return JsonResponse({'messages': message_data})
 #delete messages
 @require_POST
 @csrf_exempt
