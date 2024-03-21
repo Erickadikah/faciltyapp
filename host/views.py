@@ -262,9 +262,10 @@ def get_messages(request, client_id):
         
         # Serialize message data into JSON format
         message_data = [{'id': message.id, 'sender': message.sender.username, 'content': message.content, 'file': message.file.url if message.file else None, 'created_at': message.created_at} for message in messages]
-        
+        # print(message_data)
         # Return the serialized message data as JSON response
         return JsonResponse({'messages': message_data})
+
 
 #delete messages
 @require_POST

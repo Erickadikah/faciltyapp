@@ -151,7 +151,7 @@
       top: 80px;
       width: 400px;
       z-index: 99;
-      padding: 20px;
+      padding: 25px;
       display: none;
       {% comment %} overflow-y: auto; {% endcomment %}
       height: 1000px;
@@ -550,50 +550,53 @@
         $("#confirmDeleteProfileBtn").hide();
         $("#cancelDeleteProfileBtn").hide();
       });
-    
-      // Fetch messages initially
-      fetchMessages();
     });
-    
     function fetchMessages() {
       $.ajax({
-        url: '/get_messages/{{ client.id }}/', // Replace with your actual URL
+        url: '/get_messages/{{ client.id }}/',
         type: 'GET',
         success: function(response) {
           $('#messageList').empty(); // Clear existing messages
-          response.forEach(function(message) {
-            var messageHtml = `
-  <a href="#" class="list-group-item list-group-item-action">
-    <div class="d-flex justify-content-between align-items-start">
-      <div>
-        <h6 class="mb-1">New Message from ${message.sender.username}</h6>
-        <p class="mb-1">${message.content}</p>
-        <small class="text-muted">${message.created_at}</small>
-      </div>
-      <span class="badge badge-primary">New</span>
-    </div>
-    <!-- Display file link -->
-    <p><a href="${message.file_url}" target="_blank"><small>Download File</small></a></p>
-    <div>
-      <button class="btn btn-sm btn-danger delete-message-btn" data-message-id="${message.id}">Delete</button>
-    </div>
-  </a>
-`;
-
-$('#messageList').append(messageHtml);
-
-          });
-          $('#notificationSection').show(); // Show notification section
+          
+          if (response.messages && Array.isArray(response.messages)) {
+            // If response contains messages array, iterate over messages
+            response.messages.forEach(function(message) {
+              displayMessage(message);
+            });
+            $('#notificationSection').show();
+          } else {
+            console.error('Invalid or missing messages array in response:', response);
+          }
         },
         error: function(xhr, status, error) {
           console.error('Error fetching messages:', error);
         }
       });
-
-    } $('#messageList').on('click', '.delete-message-btn', function() {
-      var messageId = $(this).data('message-id');
-      deleteMessage(messageId);
-  });
+    }
+    
+    function displayMessage(message) {
+      var messageHtml = `
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">New Message from ${message.sender}</h6>
+              <p class="mb-1">${message.content}</p>
+              <small class="text-muted">${message.created_at}</small>
+            </div>
+            <span class="badge badge-primary">New</span>
+          </div>
+          <p><a href="${message.file}" target="_blank"><small>Download File</small></a></p>
+          <div>
+            <button class="btn btn-sm btn-danger delete-message-btn" data-message-id="${message.id}">Delete</button>
+          </div>
+        </a>
+      `;
+      $('#messageList').append(messageHtml);
+    }
+    
+    // Fetch messages on page load
+    fetchMessages();
+    
   
   // Function to delete message
   function deleteMessage(messageId) {

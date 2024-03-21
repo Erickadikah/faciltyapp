@@ -548,7 +548,7 @@
           // Send form data to the backend (Django view)
           $.ajax({
             type: "POST",
-            url: "/send_message/", // Adjust the URL to your Django view
+            url: `/send_message/${userId }/`, // Adjust the URL to your Django view
             data: formData,
             processData: false,
             contentType: false,
