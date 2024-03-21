@@ -376,6 +376,7 @@
       <div class="card-footer user-details" style="display: none">
         <p>User Details:</p>
         <ul>
+          <li>id: {{ client.id }}</li>
           <li>Username: {{ client.username }}</li>
           <li>Email: {{ client.email }}</li>
           <!-- Add more client details as needed -->
@@ -537,23 +538,23 @@
       });
     
       // Submit message form when clicking the "Send Message" button
-$(".message-button").on("click", function () {
-  var userId = $(this).data("user-id");
-
-  $("#sendMessageForm_" + userId).on("submit", function (event) {
-    event.preventDefault();
-    var formData = new FormData(this); // Create FormData object from the form
-
-    // Send form data to the backend (Django view)
-    $.ajax({
-      type: "POST",
-      url: `/send_message/${userId}/`, // Corrected URL with userId
-      data: formData,
-      processData: false,
-      contentType: false,
-    });
-  });
-});
+      $(".message-button").on("click", function () {
+        var userId = $(this).data("user-id");
+    
+        $("#sendMessageForm_" + userId).on("submit", function (event) {
+          event.preventDefault();
+          var formData = new FormData(this); // Create FormData object from the form
+    
+          // Send form data to the backend (Django view)
+          $.ajax({
+            type: "POST",
+            url: "/send_message/", // Adjust the URL to your Django view
+            data: formData,
+            processData: false,
+            contentType: false,
+          });
+        });
+      });
 
     
       // Close message form if clicking outside of it

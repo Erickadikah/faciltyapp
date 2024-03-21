@@ -9,7 +9,7 @@ import string
 CustomUser = get_user_model()
 
 class Client(models.Model):
-    raw_password = models.CharField(max_length=128, blank=True, null=True)
+    # raw_password = models.CharField(max_length=128, blank=True, null=True)
     creator_id = models.IntegerField()
     username = models.CharField(max_length=120)
     email = models.EmailField(unique=True)
@@ -19,16 +19,6 @@ class Client(models.Model):
     rentEndDate = models.DateField()
     password = models.CharField(max_length=128, blank=True)  # Make sure the field allows blank values
     
-    def save(self, *args, **kwargs):
-        if not self.password:  # Check if a password is provided
-            self.password = self.generate_random_password()  # Generate a random password if not provided
-        else:
-            self.password = make_password(self.password)  # Hash the provided password
-        super().save(*args, **kwargs)
-    
-    def generate_random_password(self):
-        # Generate a random password of length 8
-        return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     def __str__(self):
         return self.username
@@ -42,10 +32,11 @@ class GuestPermission(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    recipient_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='received_messages_user')
+    recipient_client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True, related_name='received_messages_client')
     content = models.TextField()
     file = models.FileField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}"
+        return f"Message from {self.sender} to {self.recipient_user or self.recipient_client}"

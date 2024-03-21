@@ -39,6 +39,7 @@ def register(request):
     return render(request, "register.html", {"form": form})
 
 # this is the login view as a host
+@csrf_exempt
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
