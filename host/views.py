@@ -236,23 +236,10 @@ def send_message(request, client_id):
 
     return render(request, 'send_message.html')
 
+#maintainance view
+def maintainance_view(request):
+    return render(request, 'maintenance.html')
 
-
-
-# def get_messages(request, client_id):
-#     messages = Message.objects.filter(recipient_id=client_id)
-#     # Serialize messages as JSON
-#     serialized_messages = []
-#     for message in messages:
-#         serialized_message = {
-#             'id': message.id,
-#             'sender': message.sender.username,
-#             'content': message.content,
-#             'timestamp': message.created_at,
-#             'file_url': message.file.url if message.file else None  # Include file URL if file exists
-#         }
-#         serialized_messages.append(serialized_message)
-#     return JsonResponse(serialized_messages, safe=False)
 
 # get all messages from the database
 def get_messages(request, client_id):
@@ -265,7 +252,6 @@ def get_messages(request, client_id):
         # print(message_data)
         # Return the serialized message data as JSON response
         return JsonResponse({'messages': message_data})
-
 
 #delete messages
 @require_POST

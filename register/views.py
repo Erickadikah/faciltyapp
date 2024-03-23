@@ -14,18 +14,18 @@ def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)  # Don't save to database yet
-            # Access additional fields from the form instance
+            user = form.save()  # Save the user using the overridden save method in the form
+            # Now you can access the user object
             phone = form.cleaned_data.get('phone')
             address = form.cleaned_data.get('address')
             eircode = form.cleaned_data.get('eircode')
             country = form.cleaned_data.get('country')
-            # Set the additional fields on the user object
             user.phone = phone
             user.address = address
             user.eircode = eircode
             user.country = country
             user.save()  # Save user with additional fields
+            print(user)
             login(request, user)
             messages.success(request, "Registration successful. You are now logged in.")
             return redirect("/login/")  # Redirect to login page or any other page after registration
