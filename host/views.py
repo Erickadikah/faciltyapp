@@ -277,13 +277,13 @@ def get_documents(request, user_id):
             document_list = []
             for document in documents:
                 document_data = {
-                    'sender': document.sender.username, # Changed 'sender' to 'sender.username
+                    'sender': document.sender.username,
                     'id': document.id,
                     'description': document.description,
                     'file': document.file.url
                 }
                 document_list.append(document_data)
-            return JsonResponse(document_list, safe=False)
+            return JsonResponse({'documents': document_list})  # Return an object with 'documents' property
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
     else:

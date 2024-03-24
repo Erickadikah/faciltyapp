@@ -556,14 +556,14 @@
         success: function(response) {
           $('#messageList').empty(); // Clear existing messages
           
-          if (response.messages && Array.isArray(response.messages)) {
-            // If response contains messages array, iterate over messages
-            response.messages.forEach(function(message) {
-              displayMessage(message);
+          if (Array.isArray(response.documents)) {
+            // If response contains documents array, iterate over documents
+            response.documents.forEach(function(document) {
+              displayMessage(document);
             });
             $('#notificationSection').show();
           } else {
-            console.error('Invalid or missing messages array in response:', response);
+            console.error('Invalid or missing documents array in response:', response);
           }
         },
         error: function(xhr, status, error) {
@@ -572,19 +572,19 @@
       });
     }
     
-    function displayMessage(message) {
+    function displayMessage(document) {
       var messageHtml = `
         <a href="#" class="list-group-item list-group-item-action">
           <div class="d-flex justify-content-between align-items-start">
             <div>
               <h6 class="mb-1">New Message from ${document.sender}</h6>
               <p class="mb-1">${document.description}</p>
-              <small class="text-muted">${message.created_at}</small>
+              <small class="text-muted">${document.file.url}</small>
             </div>
             <span class="badge badge-primary">New</span>
           </div>
           <div>
-            <button class="btn btn-sm btn-danger delete-message-btn" data-message-id="${message.id}">Delete</button>
+            <button class="btn btn-sm btn-danger delete-message-btn" data-message-id="${document.id}">Delete</button>
           </div>
         </a>
       `;
@@ -593,6 +593,7 @@
     
     // Fetch messages on page load
     fetchMessages();
+    
     
     // Add click event listener to the maintenance link
     document.getElementById("maintenance-link").addEventListener("click", function(event) {
