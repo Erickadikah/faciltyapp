@@ -237,39 +237,9 @@
       <div class="card-header bg-success text-white">
         <h5 class="card-title mb-0">Notifications</h5>
       </div>
-      <div class="card-body p-0">
-        <div class="list-group list-group-flush">
-          <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h6 class="mb-1">New Message from John Doe</h6>
-                <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.</p>
-                <small class="text-muted">Just now</small>
-              </div>
-              <span class="badge badge-primary">New</span>
-            </div>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h6 class="mb-1">Meeting Reminder</h6>
-                <p class="mb-1">Don't forget about the meeting tomorrow at 10:00 AM in Conference Room A.</p>
-                <small class="text-muted">2 hours ago</small>
-              </div>
-              <span class="badge badge-secondary">Old</span>
-            </div>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h6 class="mb-1">Urgent: Server Maintenance</h6>
-                <p class="mb-1">Scheduled maintenance for the server will start in 30 minutes. Please make sure all work is saved.</p>
-                <small class="text-muted">Yesterday</small>
-              </div>
-              <span class="badge badge-warning">Urgent</span>
-            </div>
-          </a>
-          <!-- Add more notifications as needed -->
+      <div class="card-body p-4">
+        <div class="list-group list-group-flush" id="messageList">
+          <!-- Messages will be dynamically added here -->
         </div>
       </div>
     </div>
@@ -282,39 +252,9 @@
     <div class="card-header bg-success text-white">
       <h5 class="card-title mb-0">Notifications</h5>
     </div>
-    <div class="card-body p-0">
-      <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h6 class="mb-1">New Message from John Doe</h6>
-              <p class="mb-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.</p>
-              <small class="text-muted">Just now</small>
-            </div>
-            <span class="badge badge-primary">New</span>
-          </div>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h6 class="mb-1">Meeting Reminder</h6>
-              <p class="mb-1">Don't forget about the meeting tomorrow at 10:00 AM in Conference Room A.</p>
-              <small class="text-muted">2 hours ago</small>
-            </div>
-            <span class="badge badge-secondary">Old</span>
-          </div>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h6 class="mb-1">Urgent: Server Maintenance</h6>
-              <p class="mb-1">Scheduled maintenance for the server will start in 30 minutes. Please make sure all work is saved.</p>
-              <small class="text-muted">Yesterday</small>
-            </div>
-            <span class="badge badge-warning">Urgent</span>
-          </div>
-        </a>
-        <!-- Add more notifications as needed -->
+    <div class="card-body p-4">
+      <div class="list-group list-group-flush" id="messageList">
+        <!-- Messages will be dynamically added here -->
       </div>
     </div>
   </div>
@@ -608,7 +548,52 @@
         maintenanceContainer.innerHTML = "";
       }
     }
-
+    //docs notifications 
+    function fetchMessages() {
+      $.ajax({
+        url: '/get_documents/{{ user.id }}/',
+        type: 'GET',
+        success: function(response) {
+          $('#messageList').empty(); // Clear existing messages
+          
+          if (response.messages && Array.isArray(response.messages)) {
+            // If response contains messages array, iterate over messages
+            response.messages.forEach(function(message) {
+              displayMessage(message);
+            });
+            $('#notificationSection').show();
+          } else {
+            console.error('Invalid or missing messages array in response:', response);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('Error fetching messages:', error);
+        }
+      });
+    }
+    
+    function displayMessage(message) {
+      var messageHtml = `
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">New Message from ${document.sender}</h6>
+              <p class="mb-1">${document.description}</p>
+              <small class="text-muted">${message.created_at}</small>
+            </div>
+            <span class="badge badge-primary">New</span>
+          </div>
+          <div>
+            <button class="btn btn-sm btn-danger delete-message-btn" data-message-id="${message.id}">Delete</button>
+          </div>
+        </a>
+      `;
+      $('#messageList').append(messageHtml);
+    }
+    
+    // Fetch messages on page load
+    fetchMessages();
+    
     // Add click event listener to the maintenance link
     document.getElementById("maintenance-link").addEventListener("click", function(event) {
       event.preventDefault(); // Prevent default link behavior

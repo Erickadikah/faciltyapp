@@ -7,6 +7,8 @@ from .forms import CustomUserCreationForm
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import HttpResponse
+
 
 # registration view for the host
 @csrf_exempt
@@ -86,3 +88,23 @@ def user(request, user_id):
         return JsonResponse(user_data)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
+    
+    
+@csrf_exempt
+def upload(request):
+    if request.method == 'POST' and request.FILES['uploadFile']:
+        document_name = request.POST['documentName']
+        document_type = request.POST['documentType']
+        uploaded_file = request.FILES['uploadFile']
+
+        # Save the uploaded document to the database
+        uploaded_document = uploaded_file(
+            user=request.user,  # Assign the current user
+            document_name=document_name,
+            document_type=document_type,
+            upload_file=uploaded_file
+        )
+        uploaded_document.save()
+
+        return HttpResponse('Document uploaded successfully!')
+    return HttpResponse('Invalid request.')

@@ -9,16 +9,14 @@ import string
 CustomUser = get_user_model()
 
 class Client(models.Model):
-    # raw_password = models.CharField(max_length=128, blank=True, null=True)
-    creator_id = models.IntegerField()
+    creator_id = models.IntegerField(default=None)
     username = models.CharField(max_length=120)
     email = models.EmailField(unique=True)
     phoneNumber = models.CharField(max_length=120, unique=True)
     address = models.CharField(max_length=120)
     rentPayDate = models.DateField()
     rentEndDate = models.DateField()
-    password = models.CharField(max_length=128, blank=True)  # Make sure the field allows blank values
-    
+    password = models.CharField(max_length=128, blank=True)
     
     def __str__(self):
         return self.username

@@ -6,11 +6,11 @@
 #     address = models.CharField(max_length=100)
 #     eircode = models.CharField(max_length=10)
 #     country = models.CharField(max_length=50)
-    
+
 #     class Meta:
 #         verbose_name = 'Custom User'
 #         verbose_name_plural = 'Custom Users'
-    
+
 #     def __str__(self):
 #         return self.username
     

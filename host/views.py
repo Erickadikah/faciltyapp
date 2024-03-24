@@ -21,6 +21,7 @@ from django.contrib import messages
 from .models import Message
 from django.views.decorators.http import require_POST
 from django.contrib.auth.hashers import check_password
+from Guest.models import UploadedDocument
 
 
 CustomUser = get_user_model()
@@ -267,3 +268,23 @@ def delete_message(request, message_id):
         return JsonResponse({'error': 'Message not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def get_documents(request, user_id):
+    if request.method == 'GET':
+        try:
+            user = User.objects.get(id=user_id)
+            documents = UploadedDocument.objects.filter(recipient_user=user)
+            document_list = []
+            for document in documents:
+                document_data = {
+                    'sender': document.sender.username, # Changed 'sender' to 'sender.username
+                    'id': document.id,
+                    'description': document.description,
+                    'file': document.file.url
+                }
+                document_list.append(document_data)
+            return JsonResponse(document_list, safe=False)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
