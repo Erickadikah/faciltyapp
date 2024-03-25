@@ -288,3 +288,17 @@ def get_documents(request, user_id):
             return JsonResponse({'error': 'User not found'}, status=404)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+    
+#delet document with id
+@require_POST
+@csrf_exempt
+def delete_document(request, document_id):
+    try:
+        document = UploadedDocument.objects.get(pk=document_id)
+        document.delete()
+        return JsonResponse({'message': 'Document deleted successfully'}, status=200)
+    except UploadedDocument.DoesNotExist:
+        return JsonResponse({'error': 'Document not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

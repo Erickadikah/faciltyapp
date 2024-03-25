@@ -310,27 +310,57 @@
               </div>
           </div>
           <div class="col-md-6">
-              <div class="card border-primary mt-5">
-                  <div class="card-header bg-primary text-white">
-                      <h5 class="card-title mb-0">Upload Signed Documents</h5>
-                  </div>
-                  <div class="card-body">
-                      <p class="card-text">If you haven't uploaded your signed documents yet, upload them now:</p>
-                      <form method="post" enctype="multipart/form-data">
-                          {% csrf_token %}
-                          <div class="form-group">
-                              <label for="document">Select Document:</label>
-                              <input type="file" class="form-control-file" id="document" name="document">
-                          </div>
-                          <div class="form-group">
-                              <label for="description">File Description:</label>
-                              <input type="text" class="form-control" id="description" name="description">
-                          </div>
-                          <button type="submit" class="btn btn-primary">Upload</button>
-                      </form>
-                  </div>
-              </div>
-          </div>
+            <div class="card border-primary mt-5">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Upload Signed Documents</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">If you haven't uploaded your signed documents yet, upload them now:</p>
+                    <form method="post" enctype="multipart/form-data" action="{% url 'upload_document' client.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="document">Select Document:</label>
+                            <input type="file" class="form-control-file" id="document" name="file">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">File Description:</label>
+                            <input type="text" class="form-control" id="description" name="description">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+                <script>
+    $(document).ready(function() {
+        $('#uploadForm').submit(function(e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+            
+            var formData = new FormData(this); // Create FormData object from the form
+            
+            // Submit the form data via AJAX
+            $.ajax({
+                url: $(this).attr('action'), // Get the form action URL
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.success);
+                        setTimeout(function() {
+                            location.reload(); // Reload the page after 3 seconds
+                        }, 3000);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    // Handle error if needed
+                }
+            });
+        });
+    });
+</script>
+            </div>
+        </div>        
       </div>
   </div>
 </div> 

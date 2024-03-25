@@ -25,7 +25,7 @@ from django.conf import settings
 # from guest.views import user_profile
 from register.views import user, user_list
 # from Guest.views import 
-from host.views import get_client, get_user, display_users, get_all_clients, send_message, get_messages, delete_message, update_client, maintainance_view, get_documents
+from host.views import get_client, get_user, display_users, get_all_clients, send_message, get_messages, delete_message, update_client, maintainance_view, get_documents, delete_document
 from Guest.views import upload_document
 
 
@@ -54,6 +54,7 @@ urlpatterns = [
     path('update_client/<int:client_id>/', update_client, name='update_client'),
     path('maintainance/', maintainance_view, name='maintenance_view'),
     path('get_documents/<int:user_id>/', get_documents, name='get_documents'),
+    path('delete_document/<int:document_id>/', delete_document, name='delete_document'),
 ]
 
 if settings.DEBUG:

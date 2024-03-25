@@ -594,6 +594,38 @@
     // Fetch messages on page load
     fetchMessages();
     
+    //delete document
+    function delete_doc(document_id) {
+      $.ajax({
+        url: '/delete_document/' + document_id + '/', // Use the document ID in the URL
+        type: 'POST',
+        success: function(response) {
+          console.log('Response:', response);
+          // Check if the deletion was successful
+          if (response.message === 'Document deleted successfully') {
+            // Remove the document from UI
+            toastr.success('Document deleted successfully');
+            $('#messageList a[data-message-id="' + document_id + '"]').remove();
+            setTimeout(function() {
+              window.location.reload();
+            }, 3000); // 3000 milliseconds = 3 seconds
+          } else {
+            console.error('Error deleting document:', response.error);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting document:', error);
+        }
+      });
+    }
+    
+    // Event listener for delete message buttons
+    $(document).on('click', '.delete-message-btn', function() {
+      // Retrieve the message ID from the data attribute
+      var document_id = $(this).data('message-id');
+      // Call the deleteMessage function with the message ID
+      delete_doc(document_id);
+    });
     
     // Add click event listener to the maintenance link
     document.getElementById("maintenance-link").addEventListener("click", function(event) {
